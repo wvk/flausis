@@ -1,4 +1,4 @@
-<%= form_for(@event) do |f| %>
+<%= form_for @event, :html => {:class => 'form'} do |f| %>
   <% if @event.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@event.errors.count, "error") %> prohibited this event from being saved:</h2>
@@ -11,31 +11,35 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :species_id %><br>
-    <%= f.number_field :species_id %>
+  <div class="form-group">
+    <%= f.label :sensor_id, :class => 'control-label' %>
+    <%= f.collection_select :sensor_id, Sensor.all, :id, :name, {:include_blank => true}, :class => 'form-control' %>
   </div>
-  <div class="field">
-    <%= f.label :sex_id %><br>
-    <%= f.number_field :sex_id %>
+  <div class="form-group">
+    <%= f.label :species_id, :class => 'control-label' %><br>
+    <%= f.collection_select :species_id, Species.all, :id, :name, {:include_blank => true}, :class => 'form-control' %>
   </div>
-  <div class="field">
-    <%= f.label :precipitation_id %><br>
-    <%= f.number_field :precipitation_id %>
+  <div class="form-group">
+    <%= f.label :sex_id, :class => 'control-label' %><br>
+    <%= f.collection_select :sex_id, Sex.all, :id, :name, {:include_blank => true}, :class => 'form-control' %>
   </div>
-  <div class="field">
-    <%= f.label :temperature_id %><br>
-    <%= f.number_field :temperature_id %>
+  <div class="form-group">
+    <%= f.label :precipitation_id, :class => 'control-label' %><br>
+    <%= f.collection_select :precipitation_id, Precipitation.all, :id, :timestamp, {:include_blank => true}, :class => 'form-control' %>
   </div>
-  <div class="field">
-    <%= f.label :event_type_id %><br>
-    <%= f.number_field :event_type_id %>
+  <div class="form-group">
+    <%= f.label :temperature_id, :class => 'control-label' %><br>
+    <%= f.collection_select :temperature_id, Temperature.all, :id, :date, {:include_blank => true}, :class => 'form-control' %>
   </div>
-  <div class="field">
-    <%= f.label :image_id %><br>
-    <%= f.number_field :image_id %>
+  <div class="form-group">
+    <%= f.label :event_type_id, :class => 'control-label' %><br>
+    <%= f.collection_select :event_type_id, EventType.all, :id, :name, {:include_blank => true}, :class => 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= f.label :image_id, :class => 'control-label' %><br>
+    <%= f.collection_select :image_id, Image.all, :id, :filename, {:include_blank => true}, :class => 'form-control' %>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit :class => 'btn btn-primary' %>
   </div>
 <% end %>

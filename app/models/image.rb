@@ -3,6 +3,9 @@ class Image < ActiveRecord::Base
 
   has_one :event
 
+  belongs_to :species
+  belongs_to :sex
+
   scope :visible, lambda { where(:ignored => [nil, false]).where('timestamp IS NOT NULL').order('timestamp ASC') }
 
   attr_accessor :possible_events
@@ -33,10 +36,13 @@ class Image < ActiveRecord::Base
     record = self.find_or_create_by :filename => hash['filename'], :timestamp => timestamp
     record.annotations = hash['annotations']
 
+    sex     = Sex.find_or_create_by :name => hash['sex_name'].to_s.strip
+    species = Species.find_or_create_by :name => hash['species_name'].to_s.strip
     if record.event
-      sex     = Sex.find_or_create_by :name => hash['sex_name'].to_s.strip
-      species = Species.find_or_create_by :name => hash['species_name'].to_s.strip
       record.event.update_attributes(:sex => sex, :species => species)
+    else
+      record.sex     = sex
+      record.species = species
     end
     record
   end

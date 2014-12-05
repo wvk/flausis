@@ -31,6 +31,11 @@ class Event < ActiveRecord::Base
   before_validation do
     self.temperature   = Temperature.find_by(:date => self.timestamp.to_date)
     self.precipitation = Precipitation.find_by(:timestamp => (self.timestamp - 30.minutes)..(self.timestamp + 30.minutes))
+
+    if self.image
+      self.species ||= self.image.species
+      self.sex     ||= self.image.sex
+    end
   end
 
   def ignore!

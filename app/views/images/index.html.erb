@@ -39,10 +39,12 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Filename</th>
-      <th>Timestamp</th>
+      <th>Bilddatei</th>
+      <th>Zeitpunkt</th>
       <th>Event</th>
-      <th>Annotations</th>
+      <th>Spezies</th>
+      <th>Geschlecht</th>
+      <th>Notizen</th>
       <th colspan="2"></th>
     </tr>
   </thead>
@@ -56,6 +58,8 @@
         </td>
         <td><%= image.timestamp %></td>
         <td><%= image.event.try(:timestamp) || image.possible_events && image.possible_events.map(&:timestamp) %></td>
+        <td><%= image.species %></td>
+        <td><%= image.sex %></td>
         <td><%= image.annotations %></td>
         <td><%= link_to 'Edit', edit_image_path(image) %></td>
         <td><%= link_to 'Destroy', image, method: :delete, data: { confirm: 'Are you sure?' } %></td>

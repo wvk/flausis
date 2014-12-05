@@ -5,7 +5,9 @@
 <% if @images.any? and @images.all? &:event %>
   <p class="alert alert-success">Alle Bilder sind einem Ereignis zugeordnet! Jauchzet und frohlocket!</p>
 <% elsif @best_solution %>
-  <p class="alert alert-info">BEST SOLUTION: <%= @best_solution.last.inspect %>  diff=<%= @diff %>, dev=<%= @dev %> <%= '<strong>PERFECT FIT!</strong>'.html_safe if @dev == 0 %></p>
+  <p class="alert alert-info">BEST SOLUTION: <%= @best_solution.last.inspect %>  diff=<%= @diff %>, dev=<%= @dev %> <%= '<strong>PERFECT FIT!</strong>'.html_safe if @dev == 0 %><br>
+  <strong>Keine dauerhafte Ereigniszuordnung, da <%= @images.select{|i| i.possible_events.empty?}.count %> Bildern keine Beobachtung zugeordnet werden konnten.</strong>
+  </p>
 <% elsif @images.any? %>
   <div class="row">
     <div class="col-sm-10">

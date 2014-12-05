@@ -12,7 +12,10 @@ class EventsController < ApplicationController
           scope = scope.joins(:precipitation).where('precipitations.amount IN (?)', precipitation_amounts)
         end
       end
-      scope = scope.where(params[:filter].reject{|k,v| v.blank? }) if params[:filter]
+
+      puts params[:filter].inspect
+      puts params[:filter].reject{|k, v| v.empty? }.inspect
+      scope = scope.where(params[:filter].reject{|k,v| v.reject!(&:empty?).empty? }) if params[:filter]
 
       if params[:from_time].present? and params[:to_time].present?
         scope = scope.where(:events => {:timestamp => (Date.parse(params[:from_time]) + 12.hours)..(Date.parse(params[:to_time]) + 36.hours)})

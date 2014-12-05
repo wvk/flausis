@@ -7,20 +7,22 @@ class EventsController < ApplicationController
     scope = Event
 
     if params[:filter].present?
-      if params[:filter][:precipitation_amounts].present? and precipitation_amounts = params[:filter].delete('precipitation_amounts').reject(&:blank?)
+      session[:events_filter] = params[:filter].dup.reject{|k,v| v.reject!(&:empty?).empty? }
+    end
+
+    if session[:events_filter]
+      if session[:events_filter][:precipitation_amounts].present? and precipitation_amounts = session[:events_filter].delete('precipitation_amounts').reject(&:blank?)
         if precipitation_amounts.any?
           scope = scope.joins(:precipitation).where('precipitations.amount IN (?)', precipitation_amounts)
         end
       end
 
-      puts params[:filter].inspect
-      puts params[:filter].reject{|k, v| v.empty? }.inspect
-      scope = scope.where(params[:filter].reject{|k,v| v.reject!(&:empty?).empty? }) if params[:filter]
+      scope = scope.where(session[:events_filter])
 
       if params[:from_time].present? and params[:to_time].present?
         scope = scope.where(:events => {:timestamp => (Date.parse(params[:from_time]) + 12.hours)..(Date.parse(params[:to_time]) + 36.hours)})
       end
-      @filter = OpenStruct.new(params[:filter])
+      @filter = OpenStruct.new(session[:events_filter])
     end
 
     @events = scope.includes(:species, :sex, :sensor, :event_type, :precipitation).order('events.timestamp ASC').all

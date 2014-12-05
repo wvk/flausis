@@ -1,12 +1,12 @@
 <header class="page-header">
-  <h1>Listing images <small>Total: <%= @images.size %></small></h1>
+  <h1>Bilder <small>Total: <%= @images.size %></small></h1>
 </header>
 
 <% if @images.any? and @images.all? &:event %>
   <p class="alert alert-success">Alle Bilder sind einem Ereignis zugeordnet! Jauchzet und frohlocket!</p>
 <% elsif @best_solution %>
   <p class="alert alert-info">BEST SOLUTION: <%= @best_solution.last.inspect %>  diff=<%= @diff %>, dev=<%= @dev %> <%= '<strong>PERFECT FIT!</strong>'.html_safe if @dev == 0 %></p>
-<% elsif params[:from_time].present? %>
+<% elsif @images.any? %>
   <div class="row">
     <div class="col-sm-10">
       <p class="alert alert-warning">

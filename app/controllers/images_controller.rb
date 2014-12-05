@@ -6,10 +6,10 @@ class ImagesController < ApplicationController
   def index
     scope = Image.visible
 
-    if params[:from_time].present? and params[:to_time].present?
-      @time_range = (Date.parse(params[:from_time]) + 12.hours)..(Date.parse(params[:to_time]) + 36.hours)
-      scope = scope.where(:timestamp => @time_range)
-    end
+    session[:from_time], session[:to_time] = (params[:from_time] || Image.last.timestamp.to_s), (params[:to_time] || Image.last.timestamp.to_s)
+
+    @time_range = (Date.parse(session[:from_time]) + 12.hours)..(Date.parse(session[:to_time]) + 36.hours)
+    scope = scope.where(:timestamp => @time_range)
 
     @images = scope.all
   end

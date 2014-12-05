@@ -35,7 +35,8 @@
       <th>Geschlecht</th>
       <th>Niederschlag</th>
       <th>Temperatur</th>
-      <th>Ereignis</th>
+      <th>Typ</th>
+      <th>Kommentar</th>
       <th colspan="2"></th>
     </tr>
   </thead>
@@ -61,6 +62,7 @@
         </td>
         <td><%= event.temperature.try(:min) || '??' %>°C/<%= event.temperature.try(:max) || '??' %>°C</td>
         <td><%= event.event_type.try :name %></td>
+        <td><%= event.image.try :annotations %></td>
 <!--         <td><%= link_to 'Show', event %></td> -->
         <td><%= link_to 'Edit', edit_event_path(event) %></td>
         <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>

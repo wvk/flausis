@@ -13,13 +13,13 @@ class EventsController < ApplicationController
     if params[:from_time].present?
       session[:from_time] = params[:from_time]
     else
-      params[:from_time] = session[:from_time] ||= Image.last.timestamp.to_s
+      params[:from_time] = session[:from_time] ||= Event.last.timestamp.to_s
     end
 
     if params[:to_time].present?
       session[:to_time] = params[:to_time]
     else
-      params[:to_time] =session[:to_time] ||= Image.last.timestamp.to_s
+      params[:to_time] =session[:to_time] ||= Event.last.timestamp.to_s
     end
 
     if session[:events_filter]
@@ -30,10 +30,7 @@ class EventsController < ApplicationController
       end
 
       scope = scope.where(session[:events_filter])
-
-      if params[:from_time].present? and params[:to_time].present?
-        scope = scope.where(:events => {:timestamp => (Date.parse(params[:from_time]) + 12.hours)..(Date.parse(params[:to_time]) + 36.hours)})
-      end
+      scope = scope.where(:events => {:timestamp => (Date.parse(params[:from_time]) + 12.hours)..(Date.parse(params[:to_time]) + 36.hours)})
       @filter = OpenStruct.new(session[:events_filter])
     end
 

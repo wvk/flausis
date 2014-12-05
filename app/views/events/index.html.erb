@@ -59,7 +59,7 @@
             <%= image_tag 'rain.png' %>
           <% end %>
         </td>
-        <td><%= event.temperature_id %></td>
+        <td><%= event.temperature.try(:min) || '??' %>°C/<%= event.temperature.try(:max) || '??' %>°C</td>
         <td><%= event.event_type.try :name %></td>
 <!--         <td><%= link_to 'Show', event %></td> -->
         <td><%= link_to 'Edit', edit_event_path(event) %></td>

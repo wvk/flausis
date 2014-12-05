@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141204230226) do
+ActiveRecord::Schema.define(version: 20141205101525) do
 
   create_table "event_types", force: true do |t|
     t.string   "name"
@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 20141204230226) do
     t.date     "date"
     t.float    "min"
     t.float    "max"
-    t.float    "avg"
+    t.float    "ground"
     t.integer  "station_id"
     t.datetime "created_at"
     t.datetime "updated_at"

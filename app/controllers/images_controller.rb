@@ -15,7 +15,7 @@ class ImagesController < ApplicationController
     if params[:to_time].present?
       session[:to_time] = params[:to_time]
     else
-      params[:to_time] =session[:to_time] ||= Image.last.timestamp.to_s
+      params[:to_time] = session[:to_time] ||= Image.last.timestamp.to_s
     end
 
     @time_range = (Date.parse(session[:from_time]) + 12.hours)..(Date.parse(session[:to_time]) + 36.hours)

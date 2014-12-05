@@ -8,7 +8,8 @@
 </header>
 
 <div class="pull-right">
-  <%= link_to 'Neue Beobachtung
+  <%= link_to 'New Event', new_event_path, :class => 'btn btn-link' %>
+</div>
 
 <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
   <%= collection_select :filter, :event_type_id, EventType.all, :id, :name, {:include_blank => 'Ereignis-Typ', :class => 'form-control'}, :multiple => true %>

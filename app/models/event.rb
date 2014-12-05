@@ -24,7 +24,7 @@ class Event < ActiveRecord::Base
   end
 
   before_validation do
-    self.precipitation = Precipitation.find_by(:date => self.timestamp.to_date)
-    self.temperature   = Temperature.find_by(:timestamp => (self.timestamp - 30.minutes)..(self.timestamp + 30.minutes))
+    self.temperature   = Temperature.find_by(:date => self.timestamp.to_date)
+    self.precipitation = Precipitation.find_by(:timestamp => (self.timestamp - 30.minutes)..(self.timestamp + 30.minutes))
   end
 end

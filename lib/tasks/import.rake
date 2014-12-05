@@ -4,7 +4,7 @@ namespace :import do
   task :all => [:events, :images, :precipitations, :temperatures]
 
   task :events => :environment do
-    Event.delete_all
+#     Event.delete_all
     {'Export_LSunten' => 'LS unten', 'Export_LSmitte' => 'LS mitte', 'Export_LSoben' => 'LS oben'}.each_pair do |filename, sensor_name|
       Event.from_csv Rails.root.join('data', filename), Sensor.find_or_create_by(:name => sensor_name)
     end

@@ -7,6 +7,8 @@ class Event < ActiveRecord::Base
   belongs_to :temperature
   belongs_to :event_type
 
+  validates_uniqueness_of :timestamp, :scope => :sensor_id
+
   def self.from_csv(file, sensor)
     csv = CSV.open(file, :col_sep => ';', :headers => true)
     csv.each do |dataset|
@@ -17,8 +19,8 @@ class Event < ActiveRecord::Base
   end
 
   def self.record_from_hash(hash, sensor)
-    self.new :sensor => sensor do |record|
-      record.timestamp  = DateTime.new *(hash['date'].split('.').reverse + hash['time'].split(':')).map(&:to_i)
+    timestamp = DateTime.new *(hash['date'].split('.').reverse + hash['time'].split(':')).map(&:to_i)
+    self.find_or_initialize_by :sensor => sensor, :timestamp => timestamp do |record|
       record.event_type = EventType.find_or_create_by(:name => hash['event_type_name'])
     end
   end

@@ -36,6 +36,10 @@
         <% end %>
       <% end %>
 
+      <% Species.all.each do |species| %>
+        <th rowspan="2"><%= species.name %></th>
+      <% end %>
+
       <th rowspan="2">Aktivität</th>
       <th rowspan="2">Nacht?</th>
       <th rowspan="2"><th>
@@ -70,6 +74,13 @@
               </td>
             <% end %>
           <% end %>
+        <% end %>
+        <% Species.all.each do |species| %>
+          <% count = precipitation.events.where(:species => species).count %>
+          <td>
+            <%= count %>
+            <%= image_tag 'activity.png' if count > 0 %>
+          </td>
         <% end %>
 
         <% count = precipitation.events.count %>

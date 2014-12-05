@@ -22,4 +22,9 @@ class Event < ActiveRecord::Base
       record.event_type = EventType.find_or_create_by(:name => hash['event_type_name'])
     end
   end
+
+  before_validation do
+    self.precipitation = Precipitation.find_by(:date => self.timestamp.to_date)
+    self.temperature   = Temperature.find_by(:timestamp => (self.timestamp - 30.minutes)..(self.timestamp + 30.minutes))
+  end
 end

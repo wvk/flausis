@@ -12,6 +12,10 @@
   <% end %>
 
   <div class="form-group">
+    <%= f.label :timestamp, :class => 'control-label' %>
+    <%= f.text_field :timestamp, :class => 'form-control' %>
+  </div>
+  <div class="form-group">
     <%= f.label :sensor_id, :class => 'control-label' %>
     <%= f.collection_select :sensor_id, Sensor.all, :id, :name, {:include_blank => true}, :class => 'form-control' %>
   </div>
@@ -23,14 +27,14 @@
     <%= f.label :sex_id, :class => 'control-label' %><br>
     <%= f.collection_select :sex_id, Sex.all, :id, :name, {:include_blank => true}, :class => 'form-control' %>
   </div>
-  <div class="form-group">
+<!--  <div class="form-group">
     <%= f.label :precipitation_id, :class => 'control-label' %><br>
     <%= f.collection_select :precipitation_id, Precipitation.all, :id, :timestamp, {:include_blank => true}, :class => 'form-control' %>
   </div>
   <div class="form-group">
     <%= f.label :temperature_id, :class => 'control-label' %><br>
     <%= f.collection_select :temperature_id, Temperature.all, :id, :date, {:include_blank => true}, :class => 'form-control' %>
-  </div>
+  </div>-->
   <div class="form-group">
     <%= f.label :event_type_id, :class => 'control-label' %><br>
     <%= f.collection_select :event_type_id, EventType.all, :id, :name, {:include_blank => true}, :class => 'form-control' %>

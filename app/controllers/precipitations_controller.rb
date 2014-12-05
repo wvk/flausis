@@ -6,8 +6,18 @@ class PrecipitationsController < ApplicationController
   def index
     scope = Precipitation
 
-    params[:from_time] ||= (Precipitation.last.timestamp - 1.week).to_s
-    params[:to_time]   ||= (Precipitation.last.timestamp).to_s
+    if params[:from_time].present?
+      session[:from_time] = params[:from_time]
+    else
+      params[:from_time] = session[:from_time] ||= Precipitation.last.date.to_s
+    end
+
+    if params[:to_time].present?
+      session[:to_time] = params[:to_time]
+    else
+      params[:to_time] = session[:to_time] ||= Precipitation.last.date.to_s
+    end
+
     scope = scope.where(:timestamp => (Date.parse(params[:from_time]) - 12.hours)..(Date.parse(params[:to_time])+ 12.hours))
 
     @precipitations = scope.includes(:events).order('timestamp ASC').all.to_a

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  filename: MyString
+  date: 2014-12-04
+  time: 2014-12-04 12:49:12
+  annotations: MyString
+
+two:
+  filename: MyString
+  date: 2014-12-04
+  time: 2014-12-04 12:49:12
+  annotations: MyString

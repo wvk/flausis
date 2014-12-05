@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Species:</strong>
+  <%= @event.species_id %>
+</p>
+
+<p>
+  <strong>Sex:</strong>
+  <%= @event.sex_id %>
+</p>
+
+<p>
+  <strong>Precipitation:</strong>
+  <%= @event.precipitation_id %>
+</p>
+
+<p>
+  <strong>Temperature:</strong>
+  <%= @event.temperature_id %>
+</p>
+
+<p>
+  <strong>Event type:</strong>
+  <%= @event.event_type_id %>
+</p>
+
+<p>
+  <strong>Image:</strong>
+  <%= @event.image_id %>
+</p>
+
+<%= link_to 'Edit', edit_event_path(@event) %> |
+<%= link_to 'Back', events_path %>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flausis</title>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+    <header class="navbar navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">flausis</a>
+        </div>
+
+        <nav class="navbar" role="navigation">
+          <ul class="nav navbar-nav">
+            <li><%= link_to 'Lichtschrankenereignisse', events_path %></li>
+            <li><%= link_to 'Aufnahmen', images_path %></li>
+            <li><%= link_to 'Niederschläge/Aktivität', precipitations_path %></li>
+            <li><%= link_to 'Temperaturen', temperatures_path %></li>
+            <li><%= link_to 'Spezies', species_index_path %></li>
+            <li><%= link_to 'Ereignistypen', event_types_path %></li>
+            <li><%= link_to 'Geschlechter', sexes_path %></li>
+            <li><%= link_to 'Sensoren', sensors_path %></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+</html>

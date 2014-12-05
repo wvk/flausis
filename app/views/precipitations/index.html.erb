@@ -1,0 +1,89 @@
+<header class="page-header">
+  <div class="pull-right">
+  Legende:
+    <%= image_tag 'day.png' %> Tag
+    <%= image_tag 'night.png' %> Nacht
+    <%= image_tag 'activity.png' %> Aktivität
+    <%= image_tag 'rain.png' %> Niederschlag
+
+  </div>
+  <h1>Niederschläge und Aktivität</h1>
+</header>
+
+<div class="pull-right">
+  <%= link_to 'CSV', params.slice(:from_time, :to_time, :at_night).merge(:format => :csv), :class => 'btn btn-link' %>
+  <%= link_to 'New Precipitation', new_precipitation_path, :class => 'btn btn-link' %>
+</div>
+
+<%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
+  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+  <%= check_box_tag :at_night, true, params[:at_night] %>
+
+  <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+  <%= link_to 'Gib mir alles!', precipitations_path, :class => 'btn btn-default' %>
+<% end %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th rowspan="2">Zeitpunkt</th>
+      <th rowspan="2">Niederschlagsmenge</th>
+
+      <% if params[:slow].present? %>
+        <% Sensor.all.each do |sensor| %>
+          <th colspan="<%= EventType.count %>"><%= sensor.name %></th>
+        <% end %>
+      <% end %>
+
+      <th rowspan="2">Aktivität</th>
+      <th rowspan="2">Nacht?</th>
+      <th rowspan="2"><th>
+    </tr>
+    <tr>
+      <% if params[:slow].present? %>
+        <% Sensor.all.each do |sensor| %>
+          <% EventType.all.each do |event_type| %>
+            <th><%= event_type.name %></th>
+          <% end %>
+        <% end %>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @precipitations.each do |precipitation| %>
+      <tr class="<%= 'warning' if precipitation.amount > 0 %>">
+        <td><%= precipitation.timestamp %></td>
+        <td>
+          <%= precipitation.amount %>
+          <%= image_tag('rain.png') if precipitation.amount > 0 %>
+        </td>
+
+        <% if params[:slow].present? %>
+          <% Sensor.all.each do |sensor| %>
+            <% EventType.all.each do |event_type| %>
+              <% count = precipitation.events.where(:sensor => sensor).where(:event_type => event_type).count %>
+              <td>
+                <%= count %>
+                <%= image_tag 'activity.png' if count > 0 %>
+              </td>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% count = precipitation.events.count %>
+        <td>
+          <%= count %>
+          <%= image_tag 'activity.png' if count > 0 %>
+        </td>
+
+        <td><%= image_tag(precipitation.at_night? ? 'night.png' : 'day.png') %></td>
+
+<!--         <td><%= link_to 'Show', precipitation %></td> -->
+        <td><%= link_to 'Edit', edit_precipitation_path(precipitation) %></td>
+<!--         <td><%= link_to 'Destroy', precipitation, method: :delete, data: { confirm: 'Are you sure?' } %></td> -->
+      </tr>
+    <% end %>
+  </tbody>
+</table>

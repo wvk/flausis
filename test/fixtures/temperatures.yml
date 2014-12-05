@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2014-12-04
+  min: 1.5
+  max: 1.5
+  avg: 1.5
+  station_id: 1
+
+two:
+  date: 2014-12-04
+  min: 1.5
+  max: 1.5
+  avg: 1.5
+  station_id: 1

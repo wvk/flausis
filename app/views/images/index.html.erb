@@ -1,0 +1,65 @@
+<header class="page-header">
+  <h1>Listing images <small>Total: <%= @images.size %></small></h1>
+</header>
+
+<% if @images.any? and @images.all? &:event %>
+  <p class="alert alert-success">Alle Bilder sind einem Ereignis zugeordnet! Jauchzet und frohlocket!</p>
+<% elsif @best_solution %>
+  <p class="alert alert-info">BEST SOLUTION: <%= @best_solution.last.inspect %>  diff=<%= @diff %>, dev=<%= @dev %> <%= '<strong>PERFECT FIT!</strong>'.html_safe if @dev == 0 %></p>
+<% elsif params[:from_time].present? %>
+  <div class="row">
+    <div class="col-sm-10">
+      <p class="alert alert-warning">
+        Zu diesem Datum fehlt die Zuordnung Bild zu Lichtschrankenereignis.
+      </p>
+    </div>
+    <div class="col-sm-2">
+      <%= link_to 'Zuordnung durchführen', match_events_images_path(params.slice(:from_time, :to_time)), :class => 'btn btn-warning btn-block' %>
+    </div>
+  </div>
+<% end %>
+
+<div class="pull-right">
+  <%= link_to 'New Image', new_image_path, :class => 'btn btn-link' %>
+</div>
+
+<%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
+  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+  <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+  <%= link_to 'Gib mir alles!', images_path, :class => 'btn btn-default' %>
+<% end %>
+
+<ul class="nav nav-tabs">
+  <% Image.visible.first.timestamp.to_date.upto(Image.visible.last.timestamp.to_date) do |date| %>
+    <li class="<%= 'active' if date.to_s == params[:from_time].to_s %>"><%= link_to date.to_s, images_path(:from_time => date.to_s, :to_time => date.to_s) %></li>
+  <% end %>
+</ul>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Filename</th>
+      <th>Timestamp</th>
+      <th>Event</th>
+      <th>Annotations</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @images.each do |image| %>
+      <tr>
+        <td>
+          <%= link_to image_tag(image.thumbnail_path), image_path(image.path) if image.thumbnail_path %><br>
+          <%= link_to image.filename, image.path if image.path %>
+        </td>
+        <td><%= image.timestamp %></td>
+        <td><%= image.event.try(:timestamp) || image.possible_events && image.possible_events.map(&:timestamp) %></td>
+        <td><%= image.annotations %></td>
+        <td><%= link_to 'Edit', edit_image_path(image) %></td>
+        <td><%= link_to 'Destroy', image, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

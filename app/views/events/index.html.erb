@@ -1,0 +1,74 @@
+<header class="page-header">
+  <div class="pull-right">
+    <% EventType.all.each do |event_type| %>
+      <div class="badge"><%= event_type.name %>: <%= event_type.events.count %></div>
+    <% end %>
+  </div>
+  <h1>Listing events <small>Total: <%= @events.size %></small></h1>
+</header>
+
+<div class="pull-right">
+  <%= link_to 'New Event', new_event_path, :class => 'btn btn-link' %>
+</div>
+
+<%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
+  <%= collection_select :filter, :event_type_id, EventType.all, :id, :name, :include_blank => 'Ereignis-Typ', :class => 'form-control' %>
+  <%= collection_select :filter, :sensor_id, Sensor.all, :id, :name, :include_blank => 'Lichtschranke', :class => 'form-control' %>
+  <%= collection_select :filter, :species_id, Species.all, :id, :name, :include_blank => 'Spezies', :class => 'form-control' %>
+  <%= collection_select :filter, :sex_id, Sex.all, :id, :name, :include_blank => 'Geschlecht', :class => 'form-control' %>
+
+  <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %>
+
+  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+  <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+  <%= link_to 'Gib mir alles!', events_path, :class => 'btn btn-default' %>
+<% end %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Bild</th>
+      <th>Zeitpunkt</th>
+      <th>Sensor</th>
+      <th>Spezies</th>
+      <th>Geschlecht</th>
+      <th>Niederschlag</th>
+      <th>Temperatur</th>
+      <th>Ereignis</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @events.each do |event| %>
+      <tr>
+        <td>
+          <% if event.image %>
+            <%= link_to image_tag(event.image.thumbnail_path), image_path(event.image.path) if event.image.thumbnail_path %><br>
+            <%= link_to event.image.filename, event.image.path if event.image.path %>
+          <% end %>
+        </td>
+        <td><%= event.timestamp %></td>
+        <td><%= event.sensor.try :name %></td>
+        <td><%= event.species.try :name %></td>
+        <td><%= event.sex.try :name %></td>
+        <td>
+          <%= event.precipitation.try(:amount) || '???' %>mm/h
+          <% if event.precipitation.try(:amount).to_f > 0 %>
+            <%= image_tag 'rain.png' %>
+          <% end %>
+        </td>
+        <td><%= event.temperature_id %></td>
+        <td><%= event.event_type.try :name %></td>
+<!--         <td><%= link_to 'Show', event %></td> -->
+        <td><%= link_to 'Edit', edit_event_path(event) %></td>
+        <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Event', new_event_path %>

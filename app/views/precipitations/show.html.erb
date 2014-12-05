@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @precipitation.timestamp %>
+</p>
+
+<p>
+  <strong>Amount:</strong>
+  <%= @precipitation.amount %>
+</p>
+
+<p>
+  <strong>Station:</strong>
+  <%= @precipitation.station_id %>
+</p>
+
+<%= link_to 'Edit', edit_precipitation_path(@precipitation) %> |
+<%= link_to 'Back', precipitations_path %>

@@ -6,7 +6,17 @@ class ImagesController < ApplicationController
   def index
     scope = Image.visible
 
-    session[:from_time], session[:to_time] = (params[:from_time] || Image.last.timestamp.to_s), (params[:to_time] || Image.last.timestamp.to_s)
+    if params[:from_time].present?
+      session[:from_time] = params[:from_time]
+    else
+      params[:from_time] = session[:from_time] ||= Image.last.timestamp.to_s
+    end
+
+    if params[:to_time].present?
+      session[:to_time] = params[:to_time]
+    else
+      params[:to_time] =session[:to_time] ||= Image.last.timestamp.to_s
+    end
 
     @time_range = (Date.parse(session[:from_time]) + 12.hours)..(Date.parse(session[:to_time]) + 36.hours)
     scope = scope.where(:timestamp => @time_range)

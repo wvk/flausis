@@ -3,7 +3,11 @@ Rails.application.routes.draw do
 
   root :to => redirect('/events')
 
-  resources :events
+  resources :events do
+    collection do
+      get :deleted
+    end
+  end
 
   resources :event_types
 

@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    scope = Event
+    scope = Event.visible
 
     if params[:filter].present?
       session[:events_filter] = params[:filter].dup.reject{|k,v| v.reject!(&:empty?).empty? }
@@ -35,6 +35,12 @@ class EventsController < ApplicationController
     end
 
     @events = scope.includes(:species, :sex, :sensor, :event_type, :precipitation).order('events.timestamp ASC').all
+  end
+
+  def deleted
+    @events = Event.ignored.all
+
+    render :index
   end
 
   # GET /events/1
@@ -84,7 +90,7 @@ class EventsController < ApplicationController
   # DELETE /events/1
   # DELETE /events/1.json
   def destroy
-    @event.destroy
+    @event.ignore!
     respond_to do |format|
       format.html { redirect_to events_url, notice: 'Event was successfully destroyed.' }
       format.json { head :no_content }

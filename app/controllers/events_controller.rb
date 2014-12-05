@@ -10,6 +10,18 @@ class EventsController < ApplicationController
       session[:events_filter] = params[:filter].dup.reject{|k,v| v.reject!(&:empty?).empty? }
     end
 
+    if params[:from_time].present?
+      session[:from_time] = params[:from_time]
+    else
+      params[:from_time] = session[:from_time] ||= Image.last.timestamp.to_s
+    end
+
+    if params[:to_time].present?
+      session[:to_time] = params[:to_time]
+    else
+      params[:to_time] =session[:to_time] ||= Image.last.timestamp.to_s
+    end
+
     if session[:events_filter]
       if session[:events_filter][:precipitation_amounts].present? and precipitation_amounts = session[:events_filter].delete('precipitation_amounts').reject(&:blank?)
         if precipitation_amounts.any?

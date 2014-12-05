@@ -19,8 +19,8 @@
 
   <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %>
 
-  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
-  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+  <%= text_field_tag :from_time, session[:from_time], :class => 'form-control' %>
+  <%= text_field_tag :to_time, session[:to_time], :class => 'form-control' %>
   <button type="submit" class="btn btn-primary">Gönn' mir!</button>
   <%= link_to 'Gib mir alles!', events_path, :class => 'btn btn-default' %>
 <% end %>

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :events do
     collection do
       get :deleted
+      get :calendar
     end
   end
 
@@ -14,6 +15,7 @@ Rails.application.routes.draw do
   resources :images do
     collection do
       get :match_events
+      get :calendar
     end
   end
 

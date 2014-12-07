@@ -69,6 +69,6 @@ class SexesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def sex_params
-      params.require(:sex).permit(:name)
+      params.require(:sex).permit(:name, :diagram_colour)
     end
 end

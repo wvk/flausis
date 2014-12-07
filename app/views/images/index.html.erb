@@ -1,8 +1,14 @@
 <header class="page-header">
+  <div class="pull-right">
+    <%= link_to 'Kalenderansicht', calendar_images_path, :class => 'btn btn-link' %>
+    <%= link_to 'Neue Aufnahme', new_image_path, :class => 'btn btn-link' %>
+    <%= link_to 'Gib mir alles!', images_path(:from_time => Event.first.timestamp, :to_time => Event.last.timestamp), :class => 'btn btn-default' %>
+  </div>
+
   <h1>Bilder <small>Total: <%= @images.size %></small></h1>
 </header>
 
-<% if @images.any? and @images.all? &:event %>
+<!--<% if @images.any? and @images.all? &:event %>
   <p class="alert alert-success">Alle Bilder sind einem Ereignis zugeordnet! Jauchzet und frohlocket!</p>
 <% elsif @best_solution %>
   <p class="alert alert-info">BEST SOLUTION: <%= @best_solution.last.inspect %>  diff=<%= @diff %>, dev=<%= @dev %> <%= '<strong>PERFECT FIT!</strong>'.html_safe if @dev == 0 %><br>
@@ -19,24 +25,19 @@
       <%= link_to 'Zuordnung durchführen', match_events_images_path(params.slice(:from_time, :to_time)), :class => 'btn btn-warning btn-block' %>
     </div>
   </div>
-<% end %>
-
-<div class="pull-right">
-  <%= link_to 'Neue Aufnahme', new_image_path, :class => 'btn btn-link' %>
-</div>
+<% end %>-->
 
 <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
-  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
-  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
-  <button type="submit" class="btn btn-primary">Gönn' mir!</button>
-  <%= link_to 'Gib mir alles!', images_path, :class => 'btn btn-default' %>
-<% end %>
+  <%= collection_select :filter, :species_id, Species.all, :id, :name, {:include_blank => 'Spezies', :class => 'form-control'}, :multiple => true %>
 
-<ul class="nav nav-tabs">
-  <% Image.visible.first.timestamp.to_date.upto(Image.visible.last.timestamp.to_date) do |date| %>
-    <li class="<%= 'active' if date.to_s == params[:from_time].to_s %>"><%= link_to date.to_s, images_path(:from_time => date.to_s, :to_time => date.to_s) %></li>
-  <% end %>
-</ul>
+  <%= collection_select :filter, :sex_id, Sex.all, :id, :name, {:include_blank => 'Geschlecht', :class => 'form-control'}, :multiple => true %>
+
+<!--   <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %> -->
+
+  <%= text_field_tag :from_time, session[:from_time], :class => 'form-control' %>
+  <%= text_field_tag :to_time, session[:to_time], :class => 'form-control' %>
+  <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+<% end %>
 
 <table class="table table-striped">
   <thead>
@@ -46,6 +47,8 @@
       <th>Event</th>
       <th>Spezies</th>
       <th>Geschlecht</th>
+      <th>Niederschlag</th>
+      <th>Temperatur</th>
       <th>Notizen</th>
       <th colspan="2"></th>
     </tr>
@@ -62,9 +65,11 @@
         <td><%= image.event.try(:timestamp) || image.possible_events && image.possible_events.map(&:timestamp) %></td>
         <td><%= image.species %></td>
         <td><%= image.sex %></td>
+        <td><%= image.precipitation %></td>
+        <td><%= image.temperature %></td>
         <td><%= image.annotations %></td>
-        <td><%= link_to 'Edit', edit_image_path(image) %></td>
-        <td><%= link_to 'Destroy', image, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to t('nav.btn.edit'), edit_image_path(image) %></td>
+        <td><%= link_to t('nav.btn.destroy'), image, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

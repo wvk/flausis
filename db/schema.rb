@@ -11,12 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141205151339) do
+ActiveRecord::Schema.define(version: 20141207115338) do
 
   create_table "event_types", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "diagram_colour"
   end
 
   create_table "events", force: true do |t|
@@ -43,6 +44,8 @@ ActiveRecord::Schema.define(version: 20141205151339) do
     t.boolean  "ignored"
     t.integer  "species_id"
     t.integer  "sex_id"
+    t.integer  "precipitation_id"
+    t.integer  "temperature_id"
   end
 
   create_table "precipitations", force: true do |t|
@@ -57,18 +60,21 @@ ActiveRecord::Schema.define(version: 20141205151339) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "diagram_colour"
   end
 
   create_table "sexes", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "diagram_colour"
   end
 
   create_table "species", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "diagram_colour"
   end
 
   create_table "temperatures", force: true do |t|

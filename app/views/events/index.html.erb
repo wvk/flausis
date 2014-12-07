@@ -4,38 +4,31 @@
       <div class="badge"><%= event_type.name %>: <%= event_type.events.count %></div>
     <% end %>
   </div>
-  <h1>Beobachtungen <small>Total: <%= @events.size %></small></h1>
+
+ <h1>Lichtschrankenereignisse <small>Total: <%= @events.size %></small></h1>
 </header>
 
 <div class="pull-right">
+  <%= link_to 'Kalenderansicht', calendar_events_path, :class => 'btn btn-link' %>
   <%= link_to 'New Event', new_event_path, :class => 'btn btn-link' %>
+  <%= link_to 'Gib mir alles!', events_path(:from_time => Event.first.timestamp, :to_time => Event.last.timestamp), :class => 'btn btn-default' %>
 </div>
 
 <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
   <%= collection_select :filter, :event_type_id, EventType.all, :id, :name, {:include_blank => 'Ereignis-Typ', :class => 'form-control'}, :multiple => true %>
   <%= collection_select :filter, :sensor_id, Sensor.all, :id, :name, {:include_blank => 'Lichtschranke', :class => 'form-control'}, :multiple => true %>
-  <%= collection_select :filter, :species_id, Species.all, :id, :name, {:include_blank => 'Spezies', :class => 'form-control'}, :multiple => true %>
-  <%= collection_select :filter, :sex_id, Sex.all, :id, :name, {:include_blank => 'Geschlecht', :class => 'form-control'}, :multiple => true %>
-
-  <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %>
+<!--   <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %> -->
 
   <%= text_field_tag :from_time, session[:from_time], :class => 'form-control' %>
   <%= text_field_tag :to_time, session[:to_time], :class => 'form-control' %>
   <button type="submit" class="btn btn-primary">Gönn' mir!</button>
-  <%= link_to 'Gib mir alles!', events_path, :class => 'btn btn-default' %>
 <% end %>
-
-<canvas id="myChart" width="900" height="250"></canvas>
-
 
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Bild</th>
       <th>Zeitpunkt</th>
       <th>Sensor</th>
-      <th>Spezies</th>
-      <th>Geschlecht</th>
       <th>Niederschlag</th>
       <th>Temperatur</th>
       <th>Typ</th>
@@ -47,16 +40,8 @@
   <tbody>
     <% @events.each do |event| %>
       <tr>
-        <td>
-          <% if event.image %>
-            <%= link_to image_tag(event.image.thumbnail_path), image_path(event.image.path) if event.image.thumbnail_path %><br>
-            <%= link_to event.image.filename, event.image.path if event.image.path %>
-          <% end %>
-        </td>
         <td><%= event.timestamp %></td>
         <td><%= event.sensor.try :name %></td>
-        <td><%= event.species.try :name %></td>
-        <td><%= event.sex.try :name %></td>
         <td>
           <%= event.precipitation.try(:amount) || '???' %>mm/h
           <% if event.precipitation.try(:amount).to_f > 0 %>
@@ -66,9 +51,8 @@
         <td><%= event.temperature.try(:min) || '??' %>°C/<%= event.temperature.try(:max) || '??' %>°C</td>
         <td><%= event.event_type.try :name %></td>
         <td><%= event.image.try :annotations %></td>
-<!--         <td><%= link_to 'Show', event %></td> -->
-        <td><%= link_to 'Edit', edit_event_path(event) %></td>
-        <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to t('nav.btn.edit'), edit_event_path(event) %></td>
+        <td><%= link_to t('nav.btn.destroy'), event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -77,55 +61,3 @@
 <br>
 
 <%= link_to 'New Event', new_event_path %>
-
-<script type="text/javascript">
-  // Get the context of the canvas element we want to select
-  var ctx = document.getElementById('myChart').getContext('2d');
-
-  var data = {
-    labels: [<%= @events.map{|e| e.timestamp.to_date.to_s }.uniq.sort.map{|d| ' "%s"' % d }.join(', ').html_safe %>],
-    datasets: [
-      <% EventType.all.each do |event_type| %>
-      <% col = event_type.id == 1 ? '30,220,30' : '220,30,30' %>
-        {
-          label: "<%= event_type %>",
-          fillColor: "rgba(<%= col %>,0.5)",
-          strokeColor: "rgba(<%= col %>,0.8)",
-          highlightFill: "rgba(<%= col %>,0.75)",
-          highlightStroke: "rgba(<%= col %>,1)",
-          data: [<%= @events.select{|e| e.event_type == event_type }.group_by{|e| e.timestamp.to_date.to_s }.map{|g, e| e.size.to_s }.join(', ') %>]
-        },
-      <% end %>
-    ]
-  };
-
-  var options = {
-    //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
-    scaleBeginAtZero : true,
-
-    //Boolean - Whether grid lines are shown across the chart
-    scaleShowGridLines : true,
-
-    //String - Colour of the grid lines
-    scaleGridLineColor : "rgba(0,0,0,.05)",
-
-    //Number - Width of the grid lines
-    scaleGridLineWidth : 1,
-
-    //Boolean - If there is a stroke on each bar
-    barShowStroke : true,
-
-    //Number - Pixel width of the bar stroke
-    barStrokeWidth : 2,
-
-    //Number - Spacing between each of the X value sets
-    barValueSpacing : 5,
-
-    //Number - Spacing between data sets within X values
-    barDatasetSpacing : 1
-  };
-
-  var myBarChart = new Chart(ctx).Bar(data, options);
-  myBarChart.update();
-
-</script>

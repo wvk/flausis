@@ -18,10 +18,14 @@ class PrecipitationsController < ApplicationController
       params[:to_time] = session[:to_time] ||= Precipitation.last.date.to_s
     end
 
-    scope = scope.where(:timestamp => (Date.parse(params[:from_time]) - 12.hours)..(Date.parse(params[:to_time])+ 12.hours))
+    scope = scope.where(:timestamp => (Date.parse(params[:from_time]) - 12.hours)..(Date.parse(params[:to_time]) + 12.hours))
 
-    @precipitations = scope.includes(:events).order('timestamp ASC').all.to_a
+    @precipitations = scope.includes(:events => [:species, :sensor]).order('timestamp ASC').all.to_a
     @precipitations.select!{|s|s.at_night?} if params[:at_night] == 'true'
+
+    @species     = Species.all
+    @sensors     = Sensor.all
+    @event_types = EventType.all
 
     respond_to do |format|
       format.html

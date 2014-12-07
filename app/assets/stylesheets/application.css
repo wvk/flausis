@@ -13,3 +13,21 @@
  *= require bootstrap
  *= require_self
  */
+
+
+table.calendar td:hover {
+  background-color: #FCF8E3;
+}
+
+table.calendar td.selected {
+  background-color: #EAE7D3;
+}
+
+table.calendar td.not-month {
+  background-color: #eee;
+  color: #999;
+}
+
+table.calendar td.today {
+  background-color: #C3CCF5;
+}

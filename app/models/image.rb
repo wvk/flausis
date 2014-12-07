@@ -5,8 +5,10 @@ class Image < ActiveRecord::Base
 
   belongs_to :species
   belongs_to :sex
+  belongs_to :temperature
+  belongs_to :precipitation
 
-  scope :visible, lambda { where(:ignored => [nil, false]).where('timestamp IS NOT NULL').order('timestamp ASC') }
+  scope :visible, lambda { where(:ignored => [nil, false]).where('images.timestamp IS NOT NULL').order('images.timestamp ASC') }
 
   attr_accessor :possible_events
 
@@ -55,6 +57,14 @@ class Image < ActiveRecord::Base
 
   def normalized_timestamp
     self.timestamp - TIME_CORRECTION.seconds
+  end
+
+  def date
+    self.timestamp.to_date
+  end
+
+  def to_html
+    %Q(<img src="#{self.thumbnail_path}" style="max-height: 24px">).html_safe
   end
 
   def ignore!

@@ -2,8 +2,17 @@ require 'solareventcalculator'
 require 'csv'
 
 class Precipitation < ActiveRecord::Base
-
   has_many :events
+  has_many :sensors,
+      :through => :events
+  has_many :event_types,
+      :through => :events
+
+  has_many :images
+  has_many :species,
+      :through => :images
+  has_many :sexes,
+      :through => :images
 
   def self.from_csv(file)
     csv = CSV.open(file, :col_sep => ',', :headers => true)
@@ -29,7 +38,7 @@ class Precipitation < ActiveRecord::Base
   end
 
   def self.amounts
-    self.select(:amount).uniq.order('amount ASC').pluck(:amount)
+    self.select(:amount).uniq.order('amount ASC').pluck(:amount).map{|s| '%.1f mm' % s }
   end
 
   def self.to_csv(records)
@@ -57,6 +66,10 @@ class Precipitation < ActiveRecord::Base
 
   def at_night?
     self.timestamp < self.sunrise or self.timestamp > self.sunset
+  end
+
+  def to_s
+    '%.1f' % self.amount
   end
 
 end

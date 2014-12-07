@@ -1,4 +1,4 @@
-<%= form_for(@sex) do |f| %>
+<%= form_for @sex, :html => {:class => 'form'} do |f| %>
   <% if @sex.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@sex.errors.count, "error") %> prohibited this sex from being saved:</h2>
@@ -11,9 +11,13 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
+  <div class="fomr-group">
+    <%= f.label :name, :class => 'control-label' %><br>
+    <%= f.text_field :name, :class => 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= f.label :diagram_colour, :class => 'control-label' %><br>
+    <%= f.text_field -group :diagram_colour, :class => 'form-control' %>
   </div>
   <div class="actions">
     <%= f.submit %>

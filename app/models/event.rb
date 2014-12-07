@@ -1,4 +1,5 @@
 class Event < ActiveRecord::Base
+
   belongs_to :sensor
   belongs_to :species
   belongs_to :sex
@@ -8,14 +9,12 @@ class Event < ActiveRecord::Base
   belongs_to :event_type
 
   scope :ignored, lambda { where(:ignored => true) }
-  scope :visible, lambda { where(:ignored => [nil, false]).order('timestamp ASC') }
+  scope :visible, lambda { where(:ignored => [nil, false]).order('events.timestamp ASC') }
 
   def self.from_csv(file, sensor)
     csv = CSV.open(file, :col_sep => ';', :headers => true)
     csv.each do |dataset|
       next if dataset['event_type_name'].blank?
-#       $stderr.print '.'
-#       $stderr.flush
       record = self.record_from_hash dataset, sensor
       record.save or raise "error! #{record.errors.inspect}"
     end
@@ -40,6 +39,14 @@ class Event < ActiveRecord::Base
 
   def ignore!
     self.update_attribute :ignored, true
+  end
+
+  def to_html
+    %Q(<img src="data:image/png;base64,#{Base64.encode64(Rails.root.join('app', 'assets', 'images', 'activity.png').read)}">).html_safe
+  end
+
+  def date
+    self.timestamp.to_date
   end
 
 end

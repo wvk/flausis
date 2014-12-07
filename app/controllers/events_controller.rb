@@ -1,44 +1,23 @@
 class EventsController < ApplicationController
-  before_action :set_event, only: [:show, :edit, :update, :destroy]
+  before_action :set_event,
+      :only => [:show, :edit, :update, :destroy]
+
+  before_action :load_filter_from_session_or_params,
+      :only => [:index, :calendar]
 
   # GET /events
   # GET /events.json
   def index
-    scope = Event.visible
+    @events = scope.includes(:sensor, :event_type, :temperature, :precipitation).all
+  end
 
-    if params[:filter].present?
-      session[:events_filter] = params[:filter].dup.reject{|k,v| v.reject!(&:empty?).empty? }
-    end
-
-    if params[:from_time].present?
-      session[:from_time] = params[:from_time]
-    else
-      params[:from_time] = session[:from_time] ||= Event.last.timestamp.to_s
-    end
-
-    if params[:to_time].present?
-      session[:to_time] = params[:to_time]
-    else
-      params[:to_time] =session[:to_time] ||= Event.last.timestamp.to_s
-    end
-
-    if session[:events_filter]
-      if session[:events_filter][:precipitation_amounts].present? and precipitation_amounts = session[:events_filter].delete('precipitation_amounts').reject(&:blank?)
-        if precipitation_amounts.any?
-          scope = scope.joins(:precipitation).where('precipitations.amount IN (?)', precipitation_amounts)
-        end
-      end
-
-      scope = scope.where(session[:events_filter])
-      scope = scope.where(:events => {:timestamp => (Date.parse(params[:from_time]) + 12.hours)..(Date.parse(params[:to_time]) + 36.hours)})
-      @filter = OpenStruct.new(session[:events_filter])
-    end
-
-    @events = scope.includes(:species, :sex, :sensor, :event_type, :precipitation).order('events.timestamp ASC').all
+  def calendar
+    @time_range = (@date.at_beginning_of_month + 12.hours)..(@date.at_end_of_month + 36.hours)
+    index
   end
 
   def deleted
-    @events = Event.ignored.all
+    @events = model.ignored.all
 
     render :index
   end
@@ -97,14 +76,19 @@ class EventsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_event
-      @event = Event.find(params[:id])
-    end
+  protected
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def event_params
-      params.require(:event).permit(:species_id, :sex_id, :precipitation_id, :temperature_id, :event_type_id, :image_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_event
+    @event = Event.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def event_params
+    params.require(:event).permit(:species_id, :sex_id, :precipitation_id, :temperature_id, :event_type_id, :image_id)
+  end
+
+  def model
+    Event
+  end
 end

@@ -1,0 +1,7 @@
+de:
+  nav:
+    btn:
+      edit: '<i title="Bearbeiten" class="glyphicon glyphicon-edit"></i>'
+      destroy: '<i title="Löschen" class="glyphicon glyphicon-trash"></i>'
+      filter: 'gönn mir!'
+      reset filter: 'gib mir alles!'

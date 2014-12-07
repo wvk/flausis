@@ -2,8 +2,7 @@
 <html>
   <head>
     <title>Flausis</title>
-    <%= stylesheet_link_tag    'application', media: 'all' %>
-    <%= javascript_include_tag 'application' %>
+    <%= stylesheet_link_tag 'application', media: 'all' %>
     <%= csrf_meta_tags %>
   </head>
   <body>
@@ -15,8 +14,8 @@
 
         <nav class="navbar" role="navigation">
           <ul class="nav navbar-nav">
-            <li><%= link_to 'Beobachtungen', events_path %></li>
-            <li><%= link_to 'Aufnahmen', images_path %></li>
+            <li><%= link_to 'Lichtschrankenereignisse', events_path %></li>
+            <li><%= link_to 'Fotos', images_path %></li>
             <li><%= link_to 'Niederschläge/Aktivität', precipitations_path %></li>
             <li><%= link_to 'Temperaturen', temperatures_path %></li>
             <li><%= link_to 'Spezies', species_index_path %></li>
@@ -24,12 +23,13 @@
             <li><%= link_to 'Geschlechter', sexes_path %></li>
             <li><%= link_to 'Sensoren', sensors_path %></li>
           </ul>
-        </div>
-      </nav>
+        </nav>
+      </div>
     </header>
 
     <div class="container">
       <%= yield %>
     </div>
+    <%= javascript_include_tag 'application' %>
   </body>
 </html>

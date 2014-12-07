@@ -1,18 +1,28 @@
 <p id="notice"><%= notice %></p>
 
 <p>
+  <%= link_to image_tag(@image.thumbnail_path), image_path(@image.path) if @image.thumbnail_path %><br>
+  <%= link_to @image.filename, @image.path if @image.path %>
+</p>
+
+<p>
   <strong>Filename:</strong>
   <%= @image.filename %>
 </p>
 
 <p>
-  <strong>Date:</strong>
-  <%= @image.date %>
+  <strong>Timestamp:</strong>
+  <%= @image.timestamp %>
 </p>
 
 <p>
-  <strong>Time:</strong>
-  <%= @image.time %>
+  <strong>Species:</strong>
+  <%= @image.species %>
+</p>
+
+<p>
+  <strong>Sex:</strong>
+  <%= @image.sex %>
 </p>
 
 <p>

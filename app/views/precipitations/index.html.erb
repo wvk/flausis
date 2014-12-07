@@ -15,14 +15,41 @@
   <%= link_to 'New Precipitation', new_precipitation_path, :class => 'btn btn-link' %>
 </div>
 
-<%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
-  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
-  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
-  <%= check_box_tag :at_night, true, params[:at_night] %>
+<div role="tabpanel">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#filters" aria-controls="filters" role="tab" data-toggle="tab">Filter</a>
+    </li>
+    <li role="presentation">
+      <a href="#in-out" aria-controls="in-out" role="tab" data-toggle="tab">Aktivität/Niederschlag</a>
+    </li>
+<!--     <li role="presentation"> -->
+<!--       <a href="#species-activity" aria-controls="species-activity" role="tab" data-toggle="tab">Aktivität/Spezies</a> -->
+<!--     </li> -->
+  </ul>
 
-  <button type="submit" class="btn btn-primary">Gönn' mir!</button>
-  <%= link_to 'Gib mir alles!', precipitations_path, :class => 'btn btn-default' %>
-<% end %>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="filters">
+      <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
+        <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+        <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+        <%= check_box_tag :at_night, true, params[:at_night] %>
+
+        <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+        <%= link_to 'Gib mir alles!', precipitations_path, :class => 'btn btn-default' %>
+      <% end %>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="in-out" style="height: 250px">
+      <canvas id="in-out-diagram" width="1120" height="250"></canvas>
+    </div>
+<!--     <div role="tabpanel" class="tab-pane" id="species-activity"> -->
+<!--       <canvas id="species-activity-diagram" width="900" height="250"></canvas> -->
+<!--     </div> -->
+  </div>
+</div>
 
 <table class="table table-striped">
   <thead>
@@ -31,13 +58,15 @@
       <th rowspan="2">Niederschlagsmenge</th>
 
       <% if params[:slow].present? %>
-        <% Sensor.all.each do |sensor| %>
-          <th colspan="<%= EventType.count %>"><%= sensor.name %></th>
+        <% @sensors.each do |sensor| %>
+          <th colspan="<%= @event_types.size %>"><%= sensor.name %></th>
         <% end %>
       <% end %>
 
-      <% Species.all.each do |species| %>
-        <th rowspan="2"><%= species.name %></th>
+      <% @species.each do |species| %>
+        <th rowspan="2" class="species" data-diagram-colour="<%= species.diagram_colour %>" style="color: rgb(<%= species.diagram_colour %>);">
+          <%= species.name %>
+        </th>
       <% end %>
 
       <th rowspan="2">Aktivität</th>
@@ -46,8 +75,8 @@
     </tr>
     <tr>
       <% if params[:slow].present? %>
-        <% Sensor.all.each do |sensor| %>
-          <% EventType.all.each do |event_type| %>
+        <% @sensors.each do |sensor| %>
+          <% @event_types.each do |event_type| %>
             <th><%= event_type.name %></th>
           <% end %>
         <% end %>
@@ -57,17 +86,17 @@
 
   <tbody>
     <% @precipitations.each do |precipitation| %>
-      <tr class="<%= 'warning' if precipitation.amount > 0 %>">
+      <tr data-date="<%= precipitation.timestamp.to_date %>" class="dataset <%= 'warning' if precipitation.amount > 0 %>">
         <td><%= precipitation.timestamp %></td>
         <td>
-          <%= precipitation.amount %>
+          <span class="precipitation-amount"><%= precipitation.amount %></span>
           <%= image_tag('rain.png') if precipitation.amount > 0 %>
         </td>
 
         <% if params[:slow].present? %>
-          <% Sensor.all.each do |sensor| %>
-            <% EventType.all.each do |event_type| %>
-              <% count = precipitation.events.where(:sensor => sensor).where(:event_type => event_type).count %>
+          <% @sensors.each do |sensor| %>
+            <% @event_types.each do |event_type| %>
+              <% count = precipitation.events.to_a.select{|s| s.sensor == sensor and s.event_type == event_type}.size %>
               <td>
                 <%= count %>
                 <%= image_tag 'activity.png' if count > 0 %>
@@ -75,25 +104,23 @@
             <% end %>
           <% end %>
         <% end %>
-        <% Species.all.each do |species| %>
-          <% count = precipitation.events.where(:species => species).count %>
-          <td>
+        <% @species.each do |species| %>
+          <% count = precipitation.events.to_a.select{|s| s.species == species}.size %>
+          <td class="species">
             <%= count %>
             <%= image_tag 'activity.png' if count > 0 %>
           </td>
         <% end %>
 
-        <% count = precipitation.events.count %>
+        <% count = precipitation.events.size %>
         <td>
-          <%= count %>
+          <span class="total-activity"><%= count %></span>
           <%= image_tag 'activity.png' if count > 0 %>
         </td>
 
         <td><%= image_tag(precipitation.at_night? ? 'night.png' : 'day.png') %></td>
 
-<!--         <td><%= link_to 'Show', precipitation %></td> -->
-        <td><%= link_to 'Edit', edit_precipitation_path(precipitation) %></td>
-<!--         <td><%= link_to 'Destroy', precipitation, method: :delete, data: { confirm: 'Are you sure?' } %></td> -->
+        <td><%= link_to t('nav.btn.edit'), edit_precipitation_path(precipitation) %></td>
       </tr>
     <% end %>
   </tbody>

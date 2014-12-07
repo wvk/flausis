@@ -21,4 +21,8 @@ class Temperature < ActiveRecord::Base
     record
   end
 
+  def to_s
+    "#{self.min}°C/#{self.max}°C"
+  end
+
 end

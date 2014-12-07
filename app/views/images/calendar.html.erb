@@ -1,0 +1,23 @@
+<header class="page-header">
+  <h1>Fotos <small>Total: <%= @images.size %></small></h1>
+</header>
+
+<div class="pull-right">
+  <%= link_to 'Neues Foto', new_image_path, :class => 'btn btn-link' %>
+</div>
+
+<%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
+  <%= hidden_field_tag :date, params[:date] %>
+  <%= collection_select :filter, :species_id, Species.all, :id, :name, {:include_blank => 'Spezies', :class => 'form-control'}, :multiple => true %>
+  <%= collection_select :filter, :sex_id, Sex.all, :id, :name, {:include_blank => 'Geschlecht', :class => 'form-control'}, :multiple => true %>
+
+<!--   <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %> -->
+
+  <button type="submit" class="btn btn-primary">
+    <%= t('nav.btn.filter') %>
+  </button>
+
+  <%= link_to t('nav.btn.reset filter'), images_path, :class => 'btn btn-default', :rel => 'index' %>
+<% end %>
+
+<%= render 'layouts/calendar', :events => @images.to_a.group_by(&:date) %>

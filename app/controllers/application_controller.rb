@@ -49,10 +49,11 @@ class ApplicationController < ActionController::Base
       end
 
       filter_scope = filter_scope.where(session[:events_filter].select{|k, v| model.respond_to? k })
-      filter_scope = filter_scope.where(:timestamp => @time_range)
-      @filter = OpenStruct.new(session[:events_filter])
-
     end
+
+    filter_scope = filter_scope.where(:timestamp => @time_range)
+    @filter = OpenStruct.new(session[:events_filter])
+
     return filter_scope
   end
 end

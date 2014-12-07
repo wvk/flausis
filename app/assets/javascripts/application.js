@@ -49,6 +49,7 @@ jQuery(document).ready(function() {
       if (currentTarget.attr('data-date')) {
         currentTarget = currentTarget.closest('td');
       }
+      if (currentTarget == undefined) return;
       var currentDate = currentTarget.attr('data-date');
       var startDate   = (fromDate < currentDate) ? fromDate : currentDate;
       var endDate     = (fromDate > currentDate) ? fromDate : currentDate;

@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
       filter_scope = filter_scope.where(:timestamp => @time_range)
       @filter = OpenStruct.new(session[:events_filter])
 
-      return filter_scope
     end
+    return filter_scope
   end
 end

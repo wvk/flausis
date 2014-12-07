@@ -1,0 +1,143 @@
+<header class="page-header">
+  <div class="pull-right">
+    Legende:
+    <%= image_tag 'day.png' %> Tag
+    <%= image_tag 'night.png' %> Nacht
+    <%= image_tag 'activity.png' %> Aktivität
+    <%= image_tag 'rain.png' %> Niederschlag
+  </div>
+
+  <h1>Niederschläge vs. Lichtschrankendaten</h1>
+</header>
+
+<div class="pull-right">
+  <%= link_to 'CSV', params.slice(:from_time, :to_time, :at_night, :sensor_ids, :event_type_ids).merge(:format => :csv), :class => 'btn btn-link' %>
+</div>
+
+<%= form_tag events_precipitations_path, :method => 'get', :class => 'form-inline' do %>
+  <div class="form-group" data-toggle="buttons">
+    <label class="btn btn-default <%= 'active' if params[:at_night] == 'true' %>">
+      <%= check_box_tag :at_night, 'true', params[:at_night].to_s %>
+      <%= image_tag 'night.png', :style => 'margin-top: -6px; margin-bottom: -6px; position:relative; top: -2px' %>
+      Nur Nachts
+    </label>
+  </div>
+
+  <div class="form-group">
+    <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+  </div>
+
+  <div class="btn-group" data-toggle="buttons">
+    <% @sensors.each do |sensor| %>
+      <label class="btn btn-default <%= 'active' if @selected_sensors.include? sensor %>">
+        <input type="checkbox" name="sensor_ids[]" value="<%= sensor.id %>" <%= 'checked' if @selected_sensors.include? sensor %>>
+        <%= sensor %>
+      </label>
+    <% end %>
+  </div>
+
+  <div class="btn-group" data-toggle="buttons">
+    <% @event_types.each do |event_type| %>
+      <label class="btn btn-default <%= 'active' if @selected_event_types.include? event_type %>">
+        <input type="checkbox" name="event_type_ids[]" value="<%= event_type.id %>" <%= 'checked' if @selected_event_types.include? event_type %>>
+        <%= event_type %>
+      </label>
+    <% end %>
+  </div>
+
+  <div class="btn-group">
+    <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+    <%= link_to 'Gib mir alles!', precipitations_path, :class => 'btn btn-default' %>
+  </div>
+<% end %>
+
+<hr>
+
+<div role="tabpanel">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation">
+      <a href="<%= images_precipitations_path %>" role="tab" >Fotodaten</a>
+    </li>
+    <li role="presentation" class="active">
+      <a href="<%= events_precipitations_path %>" role="tab">Lichtschrankendaten</a>
+    </li>
+  </ul>
+
+  <div class="tab-content" style="border: 1px solid #ddd; border-top: none; padding-bottom: 10px;">
+    <div role="tabpanel" class="tab-pane active" id="in-out" style="height: 250px">
+      <canvas id="in-out-diagram" width="1120" height="250"></canvas>
+    </div>
+  </div>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Zeitpunkt</th>
+      <th>Niederschlagsmenge</th>
+
+      <% @selected_sensors.each do |sensor| %>
+        <th class="use-in-graph sensor" data-diagram-colour="<%= sensor.diagram_colour %>" style="color: rgb(<%= sensor.diagram_colour %>);">
+          <%= sensor %>
+        </th>
+      <% end %>
+
+      <% @selected_event_types.each do |event_type| %>
+        <th class="use-in-graph event_type" data-diagram-colour="<%= event_type.diagram_colour %>" style="color: rgb(<%= event_type.diagram_colour %>);">
+          <%= event_type %>
+        </th>
+      <% end %>
+
+      <th>Aktivität</th>
+      <th>Nacht?</th>
+      <th><th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @precipitations.each do |precipitation| %>
+      <tr data-date="<%= precipitation.timestamp.to_date %>" class="dataset <%= 'warning' if precipitation.amount > 0 %>">
+        <td class="timestamp">
+          <time date="<%= precipitation.timestamp.to_date %>" datetime="<%= precipitation.timestamp %>">
+            <%= precipitation.timestamp.to_s(:hourly) %>
+          </time>
+        </td>
+
+        <td>
+          <span class="precipitation-amount"><%= precipitation.amount %></span>
+          <%= image_tag('rain.png') if precipitation.amount > 0 %>
+        </td>
+
+        <% @selected_sensors.each do |sensor| %>
+          <% count = precipitation.events.to_a.select{|s| s.sensor == sensor}.size %>
+          <td class="sensor use-in-graph">
+            <%= count %>
+            <%= image_tag 'activity.png' if count > 0 %>
+          </td>
+        <% end %>
+
+        <% @selected_event_types.each do |event_type| %>
+          <% count = precipitation.events.to_a.select{|s| s.event_type == event_type}.size %>
+          <td class="event_type use-in-graph">
+            <%= count %>
+            <%= image_tag 'activity.png' if count > 0 %>
+          </td>
+        <% end %>
+
+        <% count = precipitation.events.size %>
+        <td>
+          <span class="total-activity"><%= count %></span>
+          <%= image_tag 'activity.png' if count > 0 %>
+        </td>
+
+        <td><%= image_tag(precipitation.at_night? ? 'night.png' : 'day.png') %></td>
+
+        <td><%= link_to t('nav.btn.edit'), edit_precipitation_path(precipitation) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

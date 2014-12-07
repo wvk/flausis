@@ -66,14 +66,16 @@ jQuery(document).ready(function() {
 
 jQuery(document).ready(function(){
   if (document.getElementById('in-out-diagram')) {
-    var chartCtx  = document.getElementById('in-out-diagram').getContext('2d');
+    var canvas         = document.getElementById('in-out-diagram');
+    var chartCtx       = canvas.getContext('2d');
+    var numberOfData   = jQuery('tr.dataset').size();
     var activities     = [];
     var precipitations = [];
     var chartLabels    = [];
     var currentDate    = '';
     var currentIdx     = 0;
 
-    var speciesData = jQuery('thead th.species').map(function(idx, elem) {
+    var speciesData = jQuery('thead th.use-in-graph').map(function(idx, elem) {
       var colour = jQuery(elem).data('diagram-colour');
       return {
           fillColor: "rgba("+ colour +",0.5)",
@@ -88,24 +90,31 @@ jQuery(document).ready(function(){
 
     jQuery('tr.dataset').each(function(idx, elem) {
       var e             = jQuery(elem);
-      var date          = e.data('date');
+      var timeElement   = e.find('time');
       var activity      = parseInt(e.find('.total-activity').text());
       var precipitation = parseFloat(e.find('.precipitation-amount').text());
 
-      if (date != currentDate) {
-        if (currentDate != '') currentIdx ++;
-        currentDate = date;
+      if (timeElement.attr('date') != currentDate || numberOfData <= 24) {
+        if (currentDate != '') {
+          currentIdx ++;
+        }
 
-        chartLabels[currentIdx]    = date;
-        precipitations[currentIdx] = precipitation * 10;
+        if (numberOfData <= 24) {
+          currentDate = String(timeElement.text()).replace(/^\s+|\s+$/g, '');;
+        } else {
+          currentDate = String(timeElement.attr('date')).replace(/^\s+|\s+$/g, '');;
+        }
+
+        chartLabels[currentIdx]    = currentDate;
+        precipitations[currentIdx] = precipitation;
         activities[currentIdx]     = activity;
-        e.find('td.species').each(function(i, spec) {
+        e.find('td.use-in-graph').each(function(i, spec) {
           speciesData[i].data[currentIdx] = parseInt(jQuery(spec).text());
         });
       } else {
-        precipitations[currentIdx] += precipitation * 10;
+        precipitations[currentIdx] += precipitation;
         activities[currentIdx]     += activity;
-        e.find('td.species').each(function(i, spec) {
+        e.find('td.use-in-graph').each(function(i, spec) {
           speciesData[i].data[currentIdx] += parseInt(jQuery(spec).text());
         });
       }
@@ -116,7 +125,6 @@ jQuery(document).ready(function(){
       datasets: [
         { label: "Niederschlag",
           type: "line",
-          bezierCurve: false,
           fillColor: "rgba(220,220,0,0.5)",
           strokeColor: "rgba(220,220,0,0.8)",
           highlightFill: "rgba(220,220,0,0.75)",
@@ -139,34 +147,31 @@ jQuery(document).ready(function(){
     });
 
     var options = {
-      //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
       scaleBeginAtZero: true,
-
-      //Boolean - Whether grid lines are shown across the chart
       scaleShowGridLines: true,
-
-      //String - Colour of the grid lines
-      scaleGridLineColor: "rgba(0,0,0,.05)",
-
-      //Number - Width of the grid lines
+      scaleFontSize: 10,
+      scaleGridLineColor: 'rgba(0,0,0,0.05)',
       scaleGridLineWidth: 1,
-
-      //Boolean - If there is a stroke on each bar
       barShowStroke: true,
-
-      //Number - Pixel width of the bar stroke
       barStrokeWidth: 1,
-
-      //Number - Spacing between each of the X value sets
-      barValueSpacing: 5,
-
-      //Number - Spacing between data sets within X values
+      barValueSpacing: 4,
       barDatasetSpacing: 1,
-
+      pointDot: true,
+      pointDotRadius: 2,
       responsive: true,
-      bezierCurve: false
+      maintainAspectRatio: false,
+      bezierCurve: false,
+      animation: false,
+      tooltipFontSize: 10,
+      tooltipTitleFontSize: 11
     };
 
     var chart = new Chart(chartCtx).Overlay(chartData, options);
+
+    canvas.onclick = function(evt) {
+      var activeBars = chart.getPointsAtEvent(evt);
+      console.log(activeBars);
+    };
+
   }
 });

@@ -7,47 +7,45 @@
     <%= image_tag 'rain.png' %> Niederschlag
   </div>
 
-  <h1>Niederschläge und Aktivität</h1>
+  <h1>Niederschläge</h1>
 </header>
 
 <div class="pull-right">
   <%= link_to 'CSV', params.slice(:from_time, :to_time, :at_night).merge(:format => :csv), :class => 'btn btn-link' %>
-  <%= link_to 'New Precipitation', new_precipitation_path, :class => 'btn btn-link' %>
+  <%= link_to 'Neuer Niederschlagswert', new_precipitation_path, :class => 'btn btn-link' %>
 </div>
 
+<%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
+  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+
+  <%= check_box_tag :at_night, true, params[:at_night] %>
+  <%= label_tag :at_night, 'nur Nachts' %>
+
+  <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+  <%= link_to 'Gib mir alles!', precipitations_path, :class => 'btn btn-default' %>
+<% end %>
 <div role="tabpanel">
-  <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-      <a href="#filters" aria-controls="filters" role="tab" data-toggle="tab">Filter</a>
+    <li role="presentation">
+      <a href="<%= images_precipitations_path %>" role="tab" >Fotodaten</a>
     </li>
     <li role="presentation">
-      <a href="#in-out" aria-controls="in-out" role="tab" data-toggle="tab">Aktivität/Niederschlag</a>
+      <a href="<%= events_precipitations_path %>" role="tab">Lichtschrankendaten</a>
     </li>
-<!--     <li role="presentation"> -->
-<!--       <a href="#species-activity" aria-controls="species-activity" role="tab" data-toggle="tab">Aktivität/Spezies</a> -->
-<!--     </li> -->
+    <li role="presentation">
+      <a href="#in-out" aria-controls="in-out" role="tab" data-toggle="tab">Gesamtaktivität/Niederschlag</a>
+    </li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="filters">
-      <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
-        <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
-        <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
-        <%= check_box_tag :at_night, true, params[:at_night] %>
-
-        <button type="submit" class="btn btn-primary">Gönn' mir!</button>
-        <%= link_to 'Gib mir alles!', precipitations_path, :class => 'btn btn-default' %>
-      <% end %>
     </div>
 
     <div role="tabpanel" class="tab-pane" id="in-out" style="height: 250px">
       <canvas id="in-out-diagram" width="1120" height="250"></canvas>
     </div>
-<!--     <div role="tabpanel" class="tab-pane" id="species-activity"> -->
-<!--       <canvas id="species-activity-diagram" width="900" height="250"></canvas> -->
-<!--     </div> -->
   </div>
 </div>
 

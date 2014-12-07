@@ -41,17 +41,25 @@ class Precipitation < ActiveRecord::Base
     self.select(:amount).uniq.order('amount ASC').pluck(:amount).map{|s| '%.1f mm' % s }
   end
 
-  def self.to_csv(records)
+  def self.to_csv(records, options = {})
+    headers = %w(timestamp precipitation_amount at_night)
+    species = []
+
+    if options[:species_ids]
+      species = Species.where(:id => options[:species_ids]).to_a
+      headers += species.map(&:name)
+    end
+
     CSV.generate do |csv|
-      csv << %w(timestamp precipitation_amount activity at_night)
+      csv << headers
       records.each do |record|
-        csv << [record.timestamp, record.amount, record.activity, record.at_night?]
+        fields = [record.timestamp, record.amount, record.at_night?]
+
+        fields += species.map{|s| record.species.where(:id => s.id).count }
+
+        csv << fields
       end
     end
-  end
-
-  def activity
-    self.events.count
   end
 
   def sunrise

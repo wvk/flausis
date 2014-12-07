@@ -1,37 +1,64 @@
 class PrecipitationsController < ApplicationController
   before_action :set_precipitation, only: [:show, :edit, :update, :destroy]
 
-  # GET /precipitations
-  # GET /precipitations.json
+  before_action :load_filter_from_session_or_params,
+      :only => [:index, :images, :events]
+
   def index
-    scope = Precipitation
+    redirect_to :action => :images
+#     @precipitations = scope.to_a
+#     @precipitations.select!{|s|s.at_night?} if params[:at_night] == 'true'
+#
+#     @species     = Species.all
+#     @sensors     = Sensor.all
+#     @event_types = EventType.all
+#
+#     respond_to do |format|
+#       format.html
+#       format.json
+#       format.csv { send_data Precipitation.to_csv(@precipitations) }
+#     end
+  end
 
-    if params[:from_time].present?
-      session[:from_time] = params[:from_time]
-    else
-      params[:from_time] = session[:from_time] ||= Precipitation.last.date.to_s
-    end
+  def images
+    @species = Species.all
 
-    if params[:to_time].present?
-      session[:to_time] = params[:to_time]
-    else
-      params[:to_time] = session[:to_time] ||= Precipitation.last.date.to_s
-    end
+    session[:species_ids]  = params[:species_ids] || @species.map(&:id)
+    params[:species_ids] ||= session[:species_ids]
 
-    scope = scope.where(:timestamp => (Date.parse(params[:from_time]) - 12.hours)..(Date.parse(params[:to_time]) + 12.hours))
-
-    @precipitations = scope.includes(:events => [:species, :sensor]).order('timestamp ASC').all.to_a
+    @selected_species = @species.select{|s| params[:species_ids].include? s.id.to_s }
+    @precipitations = scope.to_a
     @precipitations.select!{|s|s.at_night?} if params[:at_night] == 'true'
-
-    @species     = Species.all
-    @sensors     = Sensor.all
-    @event_types = EventType.all
 
     respond_to do |format|
       format.html
       format.json
-      format.csv { send_data Precipitation.to_csv(@precipitations) }
+      format.csv { send_data Precipitation.to_csv(@precipitations, params) }
     end
+  end
+
+  def events
+    @sensors     = Sensor.all
+    @event_types = EventType.all
+
+    session[:sensor_ids]  = params[:sensor_ids] || @sensors.map(&:id)
+    params[:sensor_ids] ||= session[:sensor_ids]
+
+    session[:event_type_ids]  = params[:event_type_ids] || @event_types.map(&:id)
+    params[:event_type_ids] ||= session[:event_type_ids]
+
+    @selected_sensors     = @sensors.select{|s| params[:sensor_ids].include? s.id.to_s }
+    @selected_event_types = @event_types.select{|s| params[:event_type_ids].include? s.id.to_s }
+
+    @precipitations = scope.to_a
+    @precipitations.select!{|s|s.at_night?} if params[:at_night] == 'true'
+
+    respond_to do |format|
+      format.html
+      format.json
+      format.csv { send_data Precipitation.to_csv(@precipitations, params) }
+    end
+
   end
 
   # GET /precipitations/1
@@ -88,7 +115,8 @@ class PrecipitationsController < ApplicationController
     end
   end
 
-  private
+  protected
+
   # Use callbacks to share common setup or constraints between actions.
   def set_precipitation
     @precipitation = Precipitation.find(params[:id])
@@ -97,5 +125,13 @@ class PrecipitationsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def precipitation_params
     params.require(:precipitation).permit(:date, :amount, :station_id)
+  end
+
+  def model
+    Precipitation
+  end
+
+  def model_scope
+    self.model.includes(:images => [:species, :sex])
   end
 end

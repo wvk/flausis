@@ -21,7 +21,12 @@ Rails.application.routes.draw do
 
   resources :temperatures
 
-  resources :precipitations
+  resources :precipitations do
+    collection do
+      get :images
+      get :events
+    end
+  end
 
   resources :sexes
 

@@ -72,6 +72,7 @@ jQuery(document).ready(function(){
     var numberOfData   = jQuery('tr.dataset').size();
     var activities     = [];
     var precipitations = [];
+    var temperatures   = [];
     var chartLabels    = [];
     var currentDate    = '';
     var currentIdx     = 0;
@@ -94,6 +95,7 @@ jQuery(document).ready(function(){
       var timeElement   = e.find('time');
       var activity      = parseInt(e.find('.total-activity').text());
       var precipitation = parseFloat(e.find('.precipitation-amount').text());
+      var minimalTemperature = parseFloat(e.find('.minimal-temperature').text());
 
       if (timeElement.attr('date') != currentDate || numberOfData <= 24) {
         if (currentDate != '') {
@@ -108,6 +110,7 @@ jQuery(document).ready(function(){
 
         chartLabels[currentIdx]    = currentDate;
         precipitations[currentIdx] = precipitation;
+        temperatures[currentIdx]   = minimalTemperature;
         activities[currentIdx]     = activity;
         e.find('td.use-in-graph').each(function(i, spec) {
           speciesData[i].data[currentIdx] = parseInt(jQuery(spec).text());
@@ -124,12 +127,20 @@ jQuery(document).ready(function(){
     var chartData = {
       labels: chartLabels,
       datasets: [
+        { label: "Temperatur",
+          type: "line",
+          fillColor: "rgba(220,0,20,0.2)",
+          strokeColor: "rgba(220,0,20,0.7)",
+          highlightFill: "rgba(220,0,20,0.75)",
+          highlightStroke: "rgba(220,0,20,1)",
+          data: temperatures
+        },
         { label: "Niederschlag",
           type: "line",
-          fillColor: "rgba(220,220,0,0.5)",
-          strokeColor: "rgba(220,220,0,0.8)",
-          highlightFill: "rgba(220,220,0,0.75)",
-          highlightStroke: "rgba(220,220,0,1)",
+          fillColor: "rgba(20,40,220,0.2)",
+          strokeColor: "rgba(20,40,220,0.8)",
+          highlightFill: "rgba(20,40,220,0.75)",
+          highlightStroke: "rgba(20,40,220,1)",
           data: precipitations
         },
         { label: "Gesamt-Aktivität",

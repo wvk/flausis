@@ -72,6 +72,7 @@
     <tr>
       <th>Zeitpunkt</th>
       <th>Niederschlagsmenge</th>
+      <th>Temperatur min/max</th>
 
       <% @selected_species.each do |species| %>
         <th class="species use-in-graph" data-diagram-colour="<%= species.diagram_colour %>" style="color: rgb(<%= species.diagram_colour %>);">
@@ -97,6 +98,11 @@
         <td>
           <span class="precipitation-amount"><%= precipitation.amount %></span>
           <%= image_tag('rain.png') if precipitation.amount > 0 %>
+        </td>
+
+        <td>
+          <span class="minimal-temperature"><%= precipitation.temperature.try(:min) || 0 %></span>°C/
+          <span class="maximal-temperature"><%= precipitation.temperature.try(:max) || 0 %></span>°C
         </td>
 
         <% @selected_species.each do |species| %>

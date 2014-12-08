@@ -80,4 +80,8 @@ class Precipitation < ActiveRecord::Base
     '%.1f' % self.amount
   end
 
+  def temperature
+    Temperature.find_by(:date => self.timestamp.to_date)
+  end
+
 end

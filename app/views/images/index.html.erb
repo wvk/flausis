@@ -28,11 +28,23 @@
 <% end %>-->
 
 <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
-  <%= collection_select :filter, :species_id, Species.all, :id, :name, {:include_blank => 'Spezies', :class => 'form-control'}, :multiple => true %>
+  <div class="btn-group" data-toggle="buttons">
+    <% @species.each do |species| %>
+      <label class="btn btn-default <%= 'active' if @selected_species.include? species %>">
+        <input type="checkbox" name="species_ids[]" value="<%= species.id %>" <%= 'checked' if @selected_species.include? species %>>
+        <%= species %>
+      </label>
+    <% end %>
+  </div>
 
-  <%= collection_select :filter, :sex_id, Sex.all, :id, :name, {:include_blank => 'Geschlecht', :class => 'form-control'}, :multiple => true %>
-
-<!--   <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %> -->
+  <div class="btn-group" data-toggle="buttons">
+    <% @sexes.each do |sex| %>
+      <label class="btn btn-default <%= 'active' if @selected_sexes.include? sex %>">
+        <input type="checkbox" name="sex_ids[]" value="<%= sex.id %>" <%= 'checked' if @selected_sexes.include? sex %>>
+        <%= sex %>
+      </label>
+    <% end %>
+  </div>
 
   <%= text_field_tag :from_time, session[:from_time], :class => 'form-control' %>
   <%= text_field_tag :to_time, session[:to_time], :class => 'form-control' %>

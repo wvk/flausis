@@ -3,21 +3,40 @@
 </header>
 
 <div class="pull-right">
-  <%= link_to 'Neues Foto', new_image_path, :class => 'btn btn-link' %>
+  <%= link_to t('nav.btn.index'), images_path, :class => 'btn btn-link', :rel => 'index' %>
 </div>
 
 <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
   <%= hidden_field_tag :date, params[:date] %>
-  <%= collection_select :filter, :species_id, Species.all, :id, :name, {:include_blank => 'Spezies', :class => 'form-control'}, :multiple => true %>
-  <%= collection_select :filter, :sex_id, Sex.all, :id, :name, {:include_blank => 'Geschlecht', :class => 'form-control'}, :multiple => true %>
+  <div class="btn-group" data-toggle="buttons">
+    <% @species.each do |species| %>
+      <label class="btn btn-default <%= 'active' if @selected_species.include? species %>" style="color: rgb(<%= species.diagram_colour %>)">
+        <input type="checkbox" name="species_ids[]" value="<%= species.id %>" <%= 'checked' if @selected_species.include? species %>>
+        <%= species %>
+      </label>
+    <% end %>
+  </div>
+
+  <div class="btn-group" data-toggle="buttons">
+    <% @sexes.each do |sex| %>
+      <label class="btn btn-default <%= 'active' if @selected_sexes.include? sex %>">
+        <input type="checkbox" name="sex_ids[]" value="<%= sex.id %>" <%= 'checked' if @selected_sexes.include? sex %>>
+        <%= sex %>
+      </label>
+    <% end %>
+  </div>
 
 <!--   <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %> -->
 
-  <button type="submit" class="btn btn-primary">
-    <%= t('nav.btn.filter') %>
-  </button>
+  <div class="btn-group">
+    <button type="submit" class="btn btn-primary">
+      <%= t('nav.btn.filter') %>
+    </button>
 
-  <%= link_to t('nav.btn.reset filter'), images_path, :class => 'btn btn-default', :rel => 'index' %>
+    <%= link_to t('nav.btn.reset filter'), calendar_images_path, :class => 'btn btn-default' %>
+  </div>
 <% end %>
+
+<hr>
 
 <%= render 'layouts/calendar', :events => @images.to_a.group_by(&:date) %>

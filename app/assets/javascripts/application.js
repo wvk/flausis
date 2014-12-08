@@ -30,7 +30,7 @@ jQuery(document).ready(function() {
     dragging = true;
   }).on('mouseup', function(event) {
     dragging = false;
-    if (fromDate) {
+    if (fromDate && fromDate !== undefined) {
       toDate = event.target.dataset['date'];
 
       if (fromDate < toDate) {

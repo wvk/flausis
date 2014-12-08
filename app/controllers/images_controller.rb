@@ -8,7 +8,28 @@ class ImagesController < ApplicationController
   # GET /images
   # GET /images.json
   def index
-    @images = scope.includes(:temperature, :precipitation, :species, :sex).all
+    @species = Species.all
+    @sexes   = Sex.all
+
+    if params[:species_ids].blank? and session[:species_ids].blank?
+      session[:species_ids] = @species.map(&:id).map(&:to_s)
+    elsif params[:species_ids].present?
+      session[:species_ids] = params[:species_ids]
+    else
+      params[:species_ids] = session[:species_ids]
+    end
+
+    if params[:sex_ids].blank? and session[:sex_ids].blank?
+      session[:sex_ids] = @species.map(&:id).map(&:to_s)
+    elsif params[:sex_ids].present?
+      session[:sex_ids] = params[:sex_ids]
+    else
+      params[:sex_ids] = session[:sex_ids]
+    end
+
+    @selected_species = @species.select{|s| params[:species_ids].include? s.id.to_s }
+    @selected_sexes   = @sexes.select{|s| params[:sex_ids].include? s.id.to_s }
+    @images = scope.includes(:temperature, :precipitation, :species, :sex).where(:species => @selected_species, :sex => @selected_sexes).all
   end
 
   def calendar

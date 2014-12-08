@@ -6,6 +6,6 @@ module ApplicationHelper
   end
 
   def calendar(date = Date.today, selection, &block)
-    Calendar.new(self, date, selection, block).table
+    FlausiCalendar.new(self, date, selection, block).table
   end
 end

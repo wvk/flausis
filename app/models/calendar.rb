@@ -1,4 +1,4 @@
-class Calendar < Struct.new(:view, :date, :selection, :callback)
+class FlausiCalendar < Struct.new(:view, :date, :selection, :callback)
   HEADER = %w[Monday Tuesday Wednesday Thursday Friday Saturday Sunday]
   START_DAY = :monday
 

@@ -12,11 +12,14 @@ class Image < ActiveRecord::Base
 
   attr_accessor :possible_events
 
-  before_create do
-    if self.filename
+  before_save do
+    unless self.filename.strip.blank?
       Dir[Rails.root.join('public', 'images', '*', self.filename).to_s].each do |file|
-        if EXIFR::JPEG.new(file).date_time.to_date == self.timestamp.to_date
+        image_timestamp = EXIFR::JPEG.new(file).date_time
+        if image_timestamp.to_date == self.timestamp.to_date
           self.path = file.sub(Rails.root.join('public', 'images/').to_s, '')
+#         else
+#           puts "Timestamp of #{file}: #{image_timestamp} -- should be #{self.timestamp.to_date}"
         end
       end
     end
@@ -33,19 +36,24 @@ class Image < ActiveRecord::Base
   end
 
   def self.record_from_hash(hash, sensor, event_type)
-    timestamp = DateTime.new *(hash['date'].split('.').reverse + hash['time'].split(':')).map(&:to_i)
+    timestamp = Time.parse hash['timestamp']
 
     record = self.find_or_create_by :filename => hash['filename'], :timestamp => timestamp
     record.annotations = hash['annotations']
 
-    sex     = Sex.find_or_create_by :name => hash['sex_name'].to_s.strip
-    species = Species.find_or_create_by :name => hash['species_name'].to_s.strip
-    if record.event
-      record.event.update_attributes(:sex => sex, :species => species)
-    else
-      record.sex     = sex
-      record.species = species
-    end
+    sex           = Sex.find_or_create_by :name => hash['sex_name'].to_s.strip
+    species       = Species.find_or_create_by :name => hash['species_name'].to_s.strip
+    precipitation = Precipitation.find_by :timestamp => (timestamp - 30.minutes) .. (timestamp + 30.minutes)
+    temperature   = Temperature.find_or_create_by :date => timestamp.to_date
+
+#     if record.event
+#       record.event.update_attributes(:sex => sex, :species => species)
+#     else
+      record.species       = species
+      record.sex           = sex
+      record.precipitation = precipitation
+      record.temperature   = temperature
+#     end
     record
   end
 

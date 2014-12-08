@@ -1,4 +1,4 @@
-require 'calendar'
+require 'flausi_calendar'
 
 module ApplicationHelper
   def t(*args)

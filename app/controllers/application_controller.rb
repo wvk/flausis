@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  before_filter :load_filter
+
   protected
 
   def load_filter_from_session_or_params
@@ -37,23 +39,29 @@ class ApplicationController < ActionController::Base
 
   def scope
     filter_scope = model_scope
-    if params[:filter].present?
-      session[:events_filter] = params[:filter].dup.reject{|k,v| v.reject!(&:empty?).empty? }
-    end
-
-    if session[:events_filter]
-      if session[:events_filter][:precipitation_amounts].present? and precipitation_amounts = session[:events_filter].delete('precipitation_amounts').reject(&:blank?)
+    if params[:filter]
+      if params[:filter][:precipitation_amounts].present? and precipitation_amounts = params[:filter].delete('precipitation_amounts').reject(&:blank?)
         if precipitation_amounts.any?
           filter_scope = filter_scope.joins(:precipitation).where('precipitations.amount IN (?)', precipitation_amounts)
         end
       end
 
-      filter_scope = filter_scope.where(session[:events_filter].select{|k, v| model.respond_to? k })
+      filter_scope = filter_scope.where(params[:filter].select{|k, v| model.respond_to? k })
     end
 
     filter_scope = filter_scope.where(:timestamp => @time_range)
-    @filter = OpenStruct.new(session[:events_filter])
+    @filter = OpenStruct.new(params[:filter])
 
     return filter_scope
+  end
+
+  def load_filter
+    if params[:filter].present?
+      session[:events_filter] = params[:filter].dup.reject{|k,v| v.reject!(&:empty?).empty? }
+    elsif session[:events_filter].blank?
+      session[:events_filter] = {}
+    end
+
+    params[:filter] = session[:events_filter]
   end
 end

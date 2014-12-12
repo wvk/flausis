@@ -7,6 +7,8 @@ Rails.application.routes.draw do
     collection do
       get :deleted
       get :calendar
+      get :upload, :action => :show_upload
+      post :upload
     end
   end
 

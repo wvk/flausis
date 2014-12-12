@@ -8,6 +8,11 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
+    @event_types = EventType.all
+    @sensors     = Sensor.all
+    @selected_event_types = params[:filter][:event_type_id] ? @event_types.select{|s| s.id.to_s.in? params[:filter][:event_type_id]} : @event_types
+    @selected_sensors     = params[:filter][:sensor_id] ? @sensors.select{|s| s.id.to_s.in? params[:filter][:sensor_id]} : @sensors
+
     @events = scope.includes(:sensor, :event_type, :temperature, :precipitation).all
   end
 
@@ -74,6 +79,25 @@ class EventsController < ApplicationController
       format.html { redirect_to events_url, notice: 'Event was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def show_upload
+  end
+
+  def upload
+    sensor = Sensor.find(params[:sensor_id])
+    if request.format == Mime::CSV
+      request.body.rewind
+      Tempfile.new do
+        f << request.body
+        f.flush
+        Event.from_csv f.path, sensor
+      end
+    elsif params[:csv_file]
+      Event.from_csv params[:csv_file].tempfile, sensor
+    end
+
+    redirect_to :action => 'index'
   end
 
   protected

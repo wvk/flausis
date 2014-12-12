@@ -3,10 +3,8 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Date</th>
-      <th>Min</th>
-      <th>Max</th>
-      <th>Ground</th>
+      <th>Zeitstempel</th>
+      <th>Wert</th>
       <th colspan="2"></th>
     </tr>
   </thead>
@@ -14,10 +12,8 @@
   <tbody>
     <% @temperatures.each do |temperature| %>
       <tr>
-        <td><%= temperature.date %></td>
-        <td><%= temperature.min %>°C</td>
-        <td><%= temperature.max %>°C</td>
-        <td><%= temperature.ground %>°C</td>
+        <td><%= temperature.timestamp %></td>
+        <td><%= temperature.value %>°C</td>
         <td><%= link_to 'Edit', edit_temperature_path(temperature) %></td>
         <td><%= link_to 'Destroy', temperature, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>

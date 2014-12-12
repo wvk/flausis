@@ -114,8 +114,7 @@
         </td>
 
         <td>
-          <span class="minimal-temperature"><%= precipitation.temperature.try(:min) || 0 %></span>°C/
-          <span class="maximal-temperature"><%= precipitation.temperature.try(:max) || 0 %></span>°C
+          <span class="minimal-temperature"><%= precipitation.temperature.try(:min) || 0 %></span>°C/<span class="maximal-temperature"><%= precipitation.temperature.try(:max) || 0 %></span>°C
         </td>
 
         <% @selected_sensors.each do |sensor| %>

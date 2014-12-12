@@ -1,0 +1,19 @@
+<header class="page-header">
+  <h1>Upload</h1>
+</header>
+
+<%= form_tag upload_events_path, :html => {:class => 'form'}, :multipart => true do |f| %>
+  <div class="form-group">
+    <%= label_tag :sensor_id, 'Sensor', :class => 'control-label' %>
+    <%= select_tag :sensor_id, options_for_select(Sensor.all.map{|s| [s.to_s, s.id]}), :class => 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :csv_file, 'CSV-Datei', :class => 'control-label' %>
+    <%= file_field_tag :csv_file, :class => 'form-control' %>
+  </div>
+
+  <button class="btn btn-primary">Datei hochladen</button>
+  <%= link_to 'zurück', events_path, :class => 'btn btn-link' %>
+<% end %>
+

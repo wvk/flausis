@@ -10,17 +10,32 @@
 
 <div class="pull-right">
   <%= link_to 'Kalenderansicht', calendar_events_path, :class => 'btn btn-link' %>
-  <%= link_to 'New Event', new_event_path, :class => 'btn btn-link' %>
+  <%= link_to 'Neues Ereignis', new_event_path, :class => 'btn btn-link' %>
+  <%= link_to 'Ereignisupload', upload_events_path, :class => 'btn btn-link' %>
   <%= link_to 'Gib mir alles!', events_path(:from_time => Event.first.timestamp, :to_time => Event.last.timestamp), :class => 'btn btn-default' %>
 </div>
 
 <%= form_tag '#', :method => 'get', :class => 'form-inline' do %>
-  <%= collection_select :filter, :event_type_id, EventType.all, :id, :name, {:include_blank => 'Ereignis-Typ', :class => 'form-control'}, :multiple => true %>
-  <%= collection_select :filter, :sensor_id, Sensor.all, :id, :name, {:include_blank => 'Lichtschranke', :class => 'form-control'}, :multiple => true %>
-<!--   <%= collection_select :filter, 'precipitation_amounts', Precipitation.amounts, :to_s, :to_s, {:include_blank => 'Niederschlagsmenge', :class => 'form-control'}, :multiple => true %> -->
+  <div class="btn-group" data-toggle="buttons">
+    <% @event_types.each do |event_type| %>
+      <label class="btn btn-default <%= 'active' if @selected_event_types.include? event_type %>">
+        <input type="checkbox" name="filter[event_type_id][]" value="<%= event_type.id %>" <%= 'checked' if @selected_event_types.include? event_type %>>
+        <%= event_type %>
+      </label>
+    <% end %>
+  </div>
 
-  <%= text_field_tag :from_time, session[:from_time], :class => 'form-control' %>
-  <%= text_field_tag :to_time, session[:to_time], :class => 'form-control' %>
+  <div class="btn-group" data-toggle="buttons">
+    <% @sensors.each do |sensor| %>
+      <label class="btn btn-default <%= 'active' if @selected_sensors.include? sensor %>">
+        <input type="checkbox" name="filter[sensor_ids][]" value="<%= sensor.id %>" <%= 'checked' if @selected_sensors.include? sensor %>>
+        <%= sensor %>
+      </label>
+    <% end %>
+  </div>
+
+  <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+  <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
   <button type="submit" class="btn btn-primary">Gönn' mir!</button>
 <% end %>
 

@@ -34,6 +34,7 @@ namespace :import do
   end
 
   task :temperatures => :environment do
+    Temperature.delete_all
     Temperature.from_csv Rails.root.join 'data', 'temperature.csv'
   end
 end

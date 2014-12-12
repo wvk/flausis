@@ -7,7 +7,7 @@ class Temperature < ActiveRecord::Base
     csv.each do |dataset|
       record = self.record_from_hash dataset
       if record.save
-        Event.where(%q{date(timestamp) = ?}, record.date).each do |event|
+        Event.where(:timestamp => (record.timestamp - 30.minutes) .. (record.timestamp + 30.minutes)).each do |event|
           event.update_attribute :temperature, record
         end
       end
@@ -15,14 +15,14 @@ class Temperature < ActiveRecord::Base
   end
 
   def self.record_from_hash(hash)
-    record = self.find_or_initialize_by :date => Date.parse(hash['Date'])
+    record = self.find_or_initialize_by :timestamp => Time.parse(hash['Date'])
 
-    record.attributes = {:min => hash['air temperature minimum'], :max => hash['air temperature maximum'], :ground => hash['air temperature at the ground']}
+    record.value = hash['air temperature']
     record
   end
 
   def to_s
-    "#{self.min}°C/#{self.max}°C"
+    "#{self.value}°C"
   end
 
 end

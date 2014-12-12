@@ -1,28 +1,13 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Date:</strong>
-  <%= @temperature.date %>
+  <strong>Timestamp:</strong>
+  <%= @temperature.timestamp %>
 </p>
 
 <p>
-  <strong>Min:</strong>
-  <%= @temperature.min %>
-</p>
-
-<p>
-  <strong>Max:</strong>
-  <%= @temperature.max %>
-</p>
-
-<p>
-  <strong>Avg:</strong>
-  <%= @temperature.avg %>
-</p>
-
-<p>
-  <strong>Station:</strong>
-  <%= @temperature.station_id %>
+  <strong>Value:</strong>
+  <%= @temperature.value %>
 </p>
 
 <%= link_to 'Edit', edit_temperature_path(@temperature) %> |

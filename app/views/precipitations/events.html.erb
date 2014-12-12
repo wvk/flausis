@@ -79,7 +79,7 @@
     <tr>
       <th>Zeitpunkt</th>
       <th>Niederschlagsmenge</th>
-      <th>Temperatur min/max</th>
+      <th>Temperatur</th>
 
       <% @selected_sensors.each do |sensor| %>
         <th class="use-in-graph sensor" data-diagram-colour="<%= sensor.diagram_colour %>" style="color: rgb(<%= sensor.diagram_colour %>);">
@@ -114,7 +114,7 @@
         </td>
 
         <td>
-          <span class="minimal-temperature"><%= precipitation.temperature.try(:min) || 0 %></span>°C/<span class="maximal-temperature"><%= precipitation.temperature.try(:max) || 0 %></span>°C
+          <span class="minimal-temperature"><%= precipitation.temperature.try(:value) || 0 %></span>°C
         </td>
 
         <% @selected_sensors.each do |sensor| %>

@@ -28,8 +28,9 @@ class Event < ActiveRecord::Base
   end
 
   before_validation do
-    self.temperature   = Temperature.find_by(:date => self.timestamp.to_date)
-    self.precipitation = Precipitation.find_by(:timestamp => (self.timestamp - 30.minutes)..(self.timestamp + 30.minutes))
+    time_range = (self.timestamp - 30.minutes)..(self.timestamp + 30.minutes)
+    self.temperature   = Temperature.find_by(:timestamp => time_range)
+    self.precipitation = Precipitation.find_by(:timestamp => time_range)
 
     if self.image
       self.species ||= self.image.species

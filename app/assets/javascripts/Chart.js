@@ -2064,6 +2064,7 @@
                     fillColor: dataset.fillColor,
                     strokeColor: dataset.strokeColor,
                     showTooltip: dataset.showTooltip,
+                    multiTooltipTemplate: dataset.multiTooltipTemplate,
                     bars: []
                 };
 
@@ -2961,7 +2962,8 @@
                                 strokeColor: dataset.pointStrokeColor,
                                 fillColor: dataset.pointColor,
                                 highlightFill: dataset.pointHighlightFill || dataset.pointColor,
-                                highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                                highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor,
+                                multiTooltipTemplate: dataset.multiTooltipTemplate
                             }));
                         }, this);
                         break;
@@ -2978,7 +2980,8 @@
                                 strokeColor: dataset.strokeColor,
                                 fillColor: dataset.fillColor,
                                 highlightFill: dataset.highlightFill || dataset.fillColor,
-                                highlightStroke: dataset.highlightStroke || dataset.strokeColor
+                                highlightStroke: dataset.highlightStroke || dataset.strokeColor,
+                                multiTooltipTemplate: dataset.multiTooltipTemplate
                             }));
                         }, this);
 
@@ -3149,7 +3152,8 @@
                             x: this.scale.calculateX(this.scale.valuesCount + 1),
                             y: this.scale.endPoint,
                             strokeColor: this.lineDatasets[lineDataSetIndex].pointStrokeColor,
-                            fillColor: this.lineDatasets[lineDataSetIndex].pointColor
+                            fillColor: this.lineDatasets[lineDataSetIndex].pointColor,
+                            multiTooltipTemplate: this.options.multiTooltipTemplate
                         }));
                         lineDataSetIndex++;
                         break;
@@ -3164,7 +3168,8 @@
                             width: this.scale.calculateBarWidth(this.barDatasets.length),
                             base: this.scale.endPoint,
                             strokeColor: this.barDatasets[barDataSetIndex].strokeColor,
-                            fillColor: this.barDatasets[barDataSetIndex].fillColor
+                            fillColor: this.barDatasets[barDataSetIndex].fillColor,
+                            multiTooltipTemplate: this.options.multiTooltipTemplate
                         }));
                         barDataSetIndex++;
                         break;
@@ -3287,7 +3292,7 @@
 
 
                                 //Include any colour information about the element
-                                tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                                tooltipLabels.push(helpers.template(element.multiTooltipTemplate || this.options.multiTooltipTemplate, element));
                                 tooltipColors.push({
                                     fill: element._saved.fillColor || element.fillColor,
                                     stroke: element._saved.strokeColor || element.strokeColor

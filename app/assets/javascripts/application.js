@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap.min
-//= require chart.min
+//= require Chart
 
 jQuery(document).ready(function() {
   var fromDate, toDate, dragging = false;
@@ -84,8 +84,9 @@ jQuery(document).ready(function(){
           strokeColor: "rgba("+ colour +",0.8)",
           highlightFill: "rgba("+ colour +",0.75)",
           highlightStroke: "rgba("+ colour +",1)",
-          label: jQuery(elem).text(),
+          label: jQuery(elem).text().replace(/^\s+|\s+$/g, ''),
           type: 'bar',
+          multiTooltipTemplate: "<%=value%> <%=datasetLabel%>",
           data: []
         };
     });
@@ -94,8 +95,8 @@ jQuery(document).ready(function(){
       var e             = jQuery(elem);
       var timeElement   = e.find('time');
       var activity      = parseInt(e.find('.total-activity').text());
-      var precipitation = parseFloat(e.find('.precipitation-amount').text());
-      var minimalTemperature = parseFloat(e.find('.minimal-temperature').text());
+      var precipitation = Math.round(parseFloat(e.find('.precipitation-amount').text()), 1);
+      var minimalTemperature = Math.round(parseFloat(e.find('.minimal-temperature').text()), 1);
 
       if (timeElement.attr('date') != currentDate || numberOfData <= 24) {
         if (currentDate != '') {
@@ -103,9 +104,9 @@ jQuery(document).ready(function(){
         }
 
         if (numberOfData <= 24) {
-          currentDate = String(timeElement.text()).replace(/^\s+|\s+$/g, '');;
+          currentDate = String(timeElement.text()).replace(/^\s+|\s+$/g, '');
         } else {
-          currentDate = String(timeElement.attr('date')).replace(/^\s+|\s+$/g, '');;
+          currentDate = String(timeElement.attr('date')).replace(/^\s+|\s+$/g, '');
         }
 
         chartLabels[currentIdx]    = currentDate;
@@ -129,18 +130,24 @@ jQuery(document).ready(function(){
       datasets: [
         { label: "Temperatur",
           type: "line",
-          fillColor: "rgba(220,0,20,0.2)",
-          strokeColor: "rgba(220,0,20,0.7)",
-          highlightFill: "rgba(220,0,20,0.75)",
-          highlightStroke: "rgba(220,0,20,1)",
+          pointFillColor: "rgba(220,0,20,0.2)",
+          fillColor: "rgba(0,0,0,0.0)",
+          pointStrokeColor: "rgba(220,0,20,0.4)",
+          strokeColor: "rgba(220,0,20,0.4)",
+          pointHighlightFill: "rgba(220,0,20,0.5)",
+          pointHighlightStroke: "rgba(220,0,20,1)",
+          multiTooltipTemplate: "Temperatur: <%=value%>°C",
           data: temperatures
         },
         { label: "Niederschlag",
           type: "line",
-          fillColor: "rgba(20,40,220,0.2)",
-          strokeColor: "rgba(20,40,220,0.8)",
-          highlightFill: "rgba(20,40,220,0.75)",
-          highlightStroke: "rgba(20,40,220,1)",
+          pointFillColor: "rgba(20,40,220,0.2)",
+          fillColor: "rgba(0,0,0,0)",
+          pointStrokeColor: "rgba(20,40,220,0.4)",
+          strokeColor: "rgba(20,40,220,0.4)",
+          pointHighlightFill: "rgba(20,40,220,0.5)",
+          pointHighlightStroke: "rgba(20,40,220,1)",
+          multiTooltipTemplate: "Niederschlag: <%=value%>mm",
           data: precipitations
         },
         { label: "Gesamt-Aktivität",
@@ -149,6 +156,7 @@ jQuery(document).ready(function(){
           strokeColor: "rgba(200,200,200,0.8)",
           highlightFill: "rgba(200,200,200,0.75)",
           highlightStroke: "rgba(200,200,200,1)",
+          multiTooltipTemplate: "Aktvität: <%=value%>",
           data: activities
         }
       ]

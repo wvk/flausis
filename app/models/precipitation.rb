@@ -42,7 +42,7 @@ class Precipitation < ActiveRecord::Base
   end
 
   def self.to_csv(records, options = {})
-    headers = %w(timestamp precipitation_amount at_night)
+    headers = %w(timestamp precipitation_amount temperature at_night)
     species = []
 
     if options[:species_ids]
@@ -53,7 +53,7 @@ class Precipitation < ActiveRecord::Base
     CSV.generate do |csv|
       csv << headers
       records.each do |record|
-        fields = [record.timestamp, record.amount, record.at_night?]
+        fields = [record.timestamp, record.amount, record.temperature.value, record.at_night?]
 
         fields += species.map{|s| record.species.where(:id => s.id).count }
 

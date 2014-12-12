@@ -108,7 +108,9 @@
           <% count = precipitation.images.to_a.select{|s| s.species == species}.size %>
           <td class="species use-in-graph">
             <%= count %>
-            <%= image_tag 'activity.png' if count > 0 %>
+            <% if count > 0  %>
+              <%= image_tag '%s.png' % (species.to_s.downcase == 'ufo' ? 'ufo' : 'activity') %>
+            <% end %>
           </td>
         <% end %>
 

@@ -37,4 +37,21 @@ namespace :import do
     Temperature.delete_all
     Temperature.from_csv Rails.root.join 'data', 'temperature.csv'
   end
+
+  task :sessions => :environment do
+    ObservationSession.delete_all
+    sun = SunTimes.new
+
+    Date.new(2014, 1, 1).upto(Date.new(2015, 12, 31)) do |date|
+      sunrise_today    = sun.rise(date, LATITUDE, LONGITUDE).to_datetime.in_time_zone('Europe/Berlin')
+      sunset_today     = sun.set(date, LATITUDE, LONGITUDE).to_datetime.in_time_zone('Europe/Berlin')
+      sunrise_tomorrow = sun.rise(date.tomorrow, LATITUDE, LONGITUDE).to_datetime.in_time_zone('Europe/Berlin')
+
+      puts "#{date}: sunrise #{sunrise_today}, sunset #{sunset_today}"
+
+      os_day   = ObservationSession.create :start_time => sunrise_today, :end_time => sunset_today,     :at_night => false
+      os_night = ObservationSession.create :start_time => sunset_today,  :end_time => sunrise_tomorrow, :at_night => true
+    end
+  end
+
 end

@@ -46,10 +46,10 @@ class ApplicationController < ActionController::Base
         end
       end
 
-      filter_scope = filter_scope.where(params[:filter].select{|k, v| model.respond_to? k })
+      filter_scope = filter_scope.where(params[:filter].select{|k, v| model.new.respond_to? k })
     end
 
-    filter_scope = filter_scope.where(:timestamp => @time_range)
+    filter_scope = filter_scope.where(:timestamp => @time_range) if model.new.respond_to? :timestamp
     @filter = OpenStruct.new(params[:filter])
 
     return filter_scope

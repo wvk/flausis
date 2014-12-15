@@ -7,6 +7,7 @@ class Image < ActiveRecord::Base
   belongs_to :sex
   belongs_to :temperature
   belongs_to :precipitation
+  belongs_to :observation_session
 
   scope :visible, lambda { where(:ignored => [nil, false]).where('images.timestamp IS NOT NULL').order('images.timestamp ASC') }
 

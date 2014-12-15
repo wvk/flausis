@@ -27,7 +27,7 @@ class PrecipitationsController < ApplicationController
     params[:species_ids] ||= session[:species_ids]
 
     @selected_species = @species.select{|s| params[:species_ids].include? s.id.to_s }
-    @precipitations = scope.to_a
+    @precipitations = scope.includes(:observation_session, :temperature).to_a
     @precipitations.select!{|s|s.at_night?} if params[:at_night] == 'true'
 
     respond_to do |format|

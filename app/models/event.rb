@@ -7,6 +7,7 @@ class Event < ActiveRecord::Base
   belongs_to :precipitation
   belongs_to :temperature
   belongs_to :event_type
+  belongs_to :observation_session
 
   scope :ignored, lambda { where(:ignored => true) }
   scope :visible, lambda { where(:ignored => [nil, false]).order('events.timestamp ASC') }

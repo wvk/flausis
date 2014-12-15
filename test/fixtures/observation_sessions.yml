@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  start_jd: 1.5
+  end_jd: 1.5
+
+two:
+  start_jd: 1.5
+  end_jd: 1.5

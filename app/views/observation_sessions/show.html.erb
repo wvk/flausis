@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Start jd:</strong>
+  <%= @observation_session.start_jd %>
+</p>
+
+<p>
+  <strong>End jd:</strong>
+  <%= @observation_session.end_jd %>
+</p>
+
+<%= link_to 'Edit', edit_observation_session_path(@observation_session) %> |
+<%= link_to 'Back', observation_sessions_path %>

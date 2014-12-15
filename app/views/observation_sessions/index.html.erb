@@ -1,0 +1,87 @@
+<header class="page-header">
+  <h1>Beobachtungszeiträume <small>insgesamt <%= @observation_sessions.count %></small></h1>
+</header>
+
+<div class="pull-right">
+  <%= link_to 'CSV', params.slice(:from_time, :to_time, :species_ids).merge(:format => :csv), :class => 'btn btn-link' %>
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="<%= 'active' if params[:action] == 'index' %>"><%= link_to image_tag('allday.png') + ' Alle', observation_sessions_path %></li>
+  <li class="<%= 'active' if params[:action] == 'nightly' %>"><%= link_to image_tag('night.png') + ' Nacht', nightly_observation_sessions_path %></li>
+  <li class="<%= 'active' if params[:action] == 'daily' %>"><%= link_to image_tag('day.png') + ' Tag', daily_observation_sessions_path %></li>
+</ul>
+
+<div class="tab-content" style="padding: 10px; border: 1px solid #dedede; border-top: none;">
+  <div class="tab-pane active">
+    <%= form_tag observation_sessions_path, :method => 'get', :class => 'form-inline' do %>
+      <div class="form-group">
+        <%= text_field_tag :from_time, params[:from_time], :class => 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= text_field_tag :to_time, params[:to_time], :class => 'form-control' %>
+      </div>
+
+      <div class="btn-group" data-toggle="buttons">
+        <% @species.each do |species| %>
+          <label class="btn btn-default <%= 'active' if @selected_species.include? species %>">
+            <input type="checkbox" name="species_ids[]" value="<%= species.id %>" <%= 'checked' if @selected_species.include? species %>>
+            <%= species %>
+          </label>
+        <% end %>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="btn btn-primary">Gönn' mir!</button>
+        <%= link_to 'Gib mir alles!', observation_sessions_path(:species_ids => @species.map(&:id)), :class => 'btn btn-default' %>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+<hr>
+
+<table class="table">
+  <thead>
+    <tr>
+      <% if params[:action] == 'index' %>
+        <th>Beginn</th>
+        <th>Ende</th>
+      <% elsif params[:action] == 'daily' %>
+        <th>Sonnenaufgang</th>
+        <th>Sonnenuntergang</th>
+      <% else %>
+        <th>Sonnenuntergang</th>
+        <th>Sonnenaufgang</th>
+      <% end %>
+      <th>Gesamtaktivität</th>
+      <% @species.each do |species| %>
+        <th style="color: rgb(<%= species.diagram_colour %>)"><%= species.name %></th>
+      <% end %>
+      <% if params[:action] == 'index' %>
+        <th>Nacht?</th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @observation_sessions.each do |observation_session| %>
+      <tr>
+        <td><%= observation_session.start_time.to_s(:minutely) %></td>
+        <td><%= observation_session.end_time.to_s(:minutely) %></td>
+        <td><%= link_to observation_session.images.count, images_path(:from_time => observation_session.start_time, :to_time => observation_session.end_time) %></td>
+        <% @species.each do |species| %>
+          <td style="color: rgb(<%= species.diagram_colour %>)"><%= observation_session.images.where(:species_id => species.id).count %></td>
+        <% end %>
+        <% if params[:action] == 'index' %>
+          <td><%= observation_session.at_night? ? 'Ja' : 'Nein' %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Observation session', new_observation_session_path %>

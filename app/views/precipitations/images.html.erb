@@ -48,82 +48,86 @@
 
 <hr>
 
-<div role="tabpanel">
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-      <a href="<%= images_precipitations_path %>" role="tab" >Fotodaten</a>
-    </li>
-    <li role="presentation">
-      <a href="<%= events_precipitations_path %>" role="tab">Lichtschrankendaten</a>
-    </li>
-  </ul>
+<% if @precipitations.any? %>
+  <div role="tabpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="<%= images_precipitations_path %>" role="tab" >Fotodaten</a>
+      </li>
+      <li role="presentation">
+        <a href="<%= events_precipitations_path %>" role="tab">Lichtschrankendaten</a>
+      </li>
+    </ul>
 
-  <!-- Tab panes -->
-  <div class="tab-content" style="border: 1px solid #ddd; border-top: none; padding-bottom: 10px;">
-    <div role="tabpanel" class="tab-pane active" id="in-out" style="height: 250px">
-      <canvas id="in-out-diagram" width="1120" height="250"></canvas>
+    <!-- Tab panes -->
+    <div class="tab-content" style="border: 1px solid #ddd; border-top: none; padding-bottom: 10px;">
+      <div role="tabpanel" class="tab-pane active" id="in-out" style="height: 250px">
+        <canvas id="in-out-diagram" width="1120" height="250"></canvas>
+      </div>
     </div>
   </div>
-</div>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Zeitpunkt</th>
-      <th>Niederschlagsmenge</th>
-      <th>Temperatur</th>
-
-      <% @selected_species.each do |species| %>
-        <th class="species use-in-graph" data-diagram-colour="<%= species.diagram_colour %>" style="color: rgb(<%= species.diagram_colour %>);">
-          <%= species.name %>
-        </th>
-      <% end %>
-
-      <th>Aktivität</th>
-      <th>Nacht?</th>
-      <th><th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @precipitations.each do |precipitation| %>
-      <tr class="dataset <%= 'warning' if precipitation.amount > 0 %>">
-        <td class="timestamp">
-          <time date="<%= precipitation.timestamp.to_date %>" datetime="<%= precipitation.timestamp %>">
-            <%= precipitation.timestamp.to_s(:hourly) %>
-          </time>
-        </td>
-
-        <td>
-          <span class="precipitation-amount"><%= precipitation.amount %></span>
-          <%= image_tag('rain.png') if precipitation.amount > 0 %>
-        </td>
-
-        <td>
-          <span class="minimal-temperature"><%= precipitation.temperature.try(:value) || 0 %></span>°C
-        </td>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Zeitpunkt</th>
+        <th>Niederschlagsmenge</th>
+        <th>Temperatur</th>
 
         <% @selected_species.each do |species| %>
-          <% count = precipitation.images.to_a.select{|s| s.species == species}.size %>
-          <td class="species use-in-graph">
-            <%= count %>
-            <% if count > 0  %>
-              <%= image_tag '%s.png' % (species.to_s.downcase == 'ufo' ? 'ufo' : 'activity') %>
-            <% end %>
-          </td>
+          <th class="species use-in-graph" data-diagram-colour="<%= species.diagram_colour %>" style="color: rgb(<%= species.diagram_colour %>);">
+            <%= species.name %>
+          </th>
         <% end %>
 
-        <% count = precipitation.images.size %>
-        <td>
-          <span class="total-activity"><%= count %></span>
-          <%= image_tag 'activity.png' if count > 0 %>
-        </td>
-
-        <td><%= image_tag(precipitation.at_night? ? 'night.png' : 'day.png') %></td>
-
-        <td><%= link_to t('nav.btn.edit'), edit_precipitation_path(precipitation) %></td>
+        <th>Aktivität</th>
+        <th>Nacht?</th>
+        <th><th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% @precipitations.each do |precipitation| %>
+        <tr class="dataset <%= 'warning' if precipitation.amount > 0 %>">
+          <td class="timestamp">
+            <time date="<%= precipitation.timestamp.to_date %>" datetime="<%= precipitation.timestamp %>">
+              <%= precipitation.timestamp.to_s(:hourly) %>
+            </time>
+          </td>
+
+          <td>
+            <span class="precipitation-amount"><%= precipitation.amount %></span>
+            <%= image_tag('rain.png') if precipitation.amount > 0 %>
+          </td>
+
+          <td>
+            <span class="minimal-temperature"><%= precipitation.temperature.try(:value) || 0 %></span>°C
+          </td>
+
+          <% @selected_species.each do |species| %>
+            <% count = precipitation.images.to_a.select{|s| s.species == species}.size %>
+            <td class="species use-in-graph">
+              <%= count %>
+              <% if count > 0  %>
+                <%= image_tag '%s.png' % (species.to_s.downcase == 'ufo' ? 'ufo' : 'activity') %>
+              <% end %>
+            </td>
+          <% end %>
+
+          <% count = precipitation.images.size %>
+          <td>
+            <span class="total-activity"><%= count %></span>
+            <%= image_tag 'activity.png' if count > 0 %>
+          </td>
+
+          <td><%= image_tag(precipitation.at_night? ? 'night.png' : 'day.png') %></td>
+
+          <td><%= link_to t('nav.btn.edit'), edit_precipitation_path(precipitation) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="alert alert-info">Keine Aktivität für den gewählten Filter im Zeitraum von <%= @from_date %> bis <%= @to_date %>.</p>
+<% end %>

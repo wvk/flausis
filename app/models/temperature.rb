@@ -1,6 +1,7 @@
 class Temperature < ActiveRecord::Base
 
   has_many :events
+  belongs_to :observation_session
 
   def self.from_csv(file)
     csv = CSV.open(file, :col_sep => ',', :headers => true)

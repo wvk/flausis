@@ -1,4 +1,3 @@
-require 'solareventcalculator'
 require 'csv'
 
 class Precipitation < ActiveRecord::Base
@@ -13,6 +12,11 @@ class Precipitation < ActiveRecord::Base
       :through => :images
   has_many :sexes,
       :through => :images
+  belongs_to :observation_session
+
+  belongs_to :temperature,
+      :foreign_key => :timestamp,
+      :primary_key => :timestamp
 
   def self.from_csv(file)
     csv = CSV.open(file, :col_sep => ',', :headers => true)
@@ -53,7 +57,7 @@ class Precipitation < ActiveRecord::Base
     CSV.generate do |csv|
       csv << headers
       records.each do |record|
-        fields = [record.timestamp, record.amount, record.temperature.value, record.at_night?, record.events.count]
+        fields = [record.timestamp, record.amount, record.temperature.value, record.at_night?, record.images.count]
 
         fields += species.map{|s| record.species.where(:id => s.id).count }
 
@@ -62,26 +66,16 @@ class Precipitation < ActiveRecord::Base
     end
   end
 
-  def sunrise
-    @sun_calculator ||= SolarEventCalculator.new(self.timestamp.to_date, 51.288467, 7.290469)
-    @sun_calculator.compute_utc_civil_sunrise
-  end
-
-  def sunset
-    @sun_calculator ||= SolarEventCalculator.new(self.timestamp.to_date, 51.288467, 7.290469)
-    @sun_calculator.compute_utc_civil_sunset
-  end
-
   def at_night?
-    self.timestamp < self.sunrise or self.timestamp > self.sunset
+    self.observation_session.at_night?
   end
 
   def to_s
     '%.1f' % self.amount
   end
 
-  def temperature
-    Temperature.find_by(:timestamp => self.timestamp)
-  end
+#   def temperature
+#     Temperature.find_by(:timestamp => self.timestamp)
+#   end
 
 end

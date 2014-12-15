@@ -40,4 +40,4 @@ gem 'spring',        group: :development
 
 gem 'exifr'
 
-gem 'RubySunrise'
+gem 'ruby-sun-times',:require => 'sun_times'

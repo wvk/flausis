@@ -69,6 +69,6 @@ class TemperaturesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def temperature_params
-      params.require(:temperature).permit(:date, :min, :max, :avg, :station_id)
+      params.require(:temperature).permit(:timestamp, :value)
     end
 end

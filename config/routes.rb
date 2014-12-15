@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  resources :observation_sessions do
+    collection do
+      get :daily
+      get :nightly
+    end
+  end
+
   resources :sensors
 
   root :to => redirect('/events')

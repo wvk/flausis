@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141209223203) do
+ActiveRecord::Schema.define(version: 20141215161846) do
 
   create_table "event_types", force: true do |t|
     t.string   "name"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20141209223203) do
     t.integer  "sensor_id"
     t.datetime "timestamp"
     t.boolean  "ignored"
+    t.integer  "observation_session_id"
   end
 
   create_table "images", force: true do |t|
@@ -46,6 +47,15 @@ ActiveRecord::Schema.define(version: 20141209223203) do
     t.integer  "sex_id"
     t.integer  "precipitation_id"
     t.integer  "temperature_id"
+    t.integer  "observation_session_id"
+  end
+
+  create_table "observation_sessions", force: true do |t|
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.boolean  "at_night"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "precipitations", force: true do |t|
@@ -54,6 +64,7 @@ ActiveRecord::Schema.define(version: 20141209223203) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "timestamp"
+    t.integer  "observation_session_id"
   end
 
   create_table "sensors", force: true do |t|
@@ -83,6 +94,7 @@ ActiveRecord::Schema.define(version: 20141209223203) do
     t.datetime "updated_at"
     t.float    "value"
     t.datetime "timestamp"
+    t.integer  "observation_session_id"
   end
 
 end

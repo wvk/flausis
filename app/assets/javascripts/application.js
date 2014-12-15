@@ -82,7 +82,7 @@ jQuery(document).ready(function(){
       return {
           fillColor: "rgba("+ colour +",0.5)",
           strokeColor: "rgba("+ colour +",0.8)",
-          highlightFill: "rgba("+ colour +",0.75)",
+          highlightFill: "rgba("+ colour +",0.9)",
           highlightStroke: "rgba("+ colour +",1)",
           label: jQuery(elem).text().replace(/^\s+|\s+$/g, ''),
           type: 'bar',
@@ -134,7 +134,7 @@ jQuery(document).ready(function(){
           fillColor: "rgba(0,0,0,0.0)",
           pointStrokeColor: "rgba(220,0,20,0.4)",
           strokeColor: "rgba(220,0,20,0.4)",
-          pointHighlightFill: "rgba(220,0,20,0.5)",
+          pointHighlightFill: "rgba(220,0,20,0.9)",
           pointHighlightStroke: "rgba(220,0,20,1)",
           multiTooltipTemplate: "Temperatur: <%=value%>°C",
           data: temperatures
@@ -145,7 +145,7 @@ jQuery(document).ready(function(){
           fillColor: "rgba(0,0,0,0)",
           pointStrokeColor: "rgba(20,40,220,0.4)",
           strokeColor: "rgba(20,40,220,0.4)",
-          pointHighlightFill: "rgba(20,40,220,0.5)",
+          pointHighlightFill: "rgba(20,40,220,0.9)",
           pointHighlightStroke: "rgba(20,40,220,1)",
           multiTooltipTemplate: "Niederschlag: <%=value%>mm",
           data: precipitations
@@ -154,7 +154,7 @@ jQuery(document).ready(function(){
           type: "bar",
           fillColor: "rgba(200,200,200,0.5)",
           strokeColor: "rgba(200,200,200,0.8)",
-          highlightFill: "rgba(200,200,200,0.75)",
+          highlightFill: "rgba(200,200,200,0.9)",
           highlightStroke: "rgba(200,200,200,1)",
           multiTooltipTemplate: "Aktvität: <%=value%>",
           data: activities

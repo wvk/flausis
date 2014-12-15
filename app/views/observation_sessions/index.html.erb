@@ -56,7 +56,7 @@
         <th>Sonnenaufgang</th>
       <% end %>
       <th>Gesamtaktivität</th>
-      <% @species.each do |species| %>
+      <% @selected_species.each do |species| %>
         <th style="color: rgb(<%= species.diagram_colour %>)"><%= species.name %></th>
       <% end %>
       <% if params[:action] == 'index' %>
@@ -71,7 +71,7 @@
         <td><%= observation_session.start_time.to_s(:minutely) %></td>
         <td><%= observation_session.end_time.to_s(:minutely) %></td>
         <td><%= link_to observation_session.images.count, images_path(:from_time => observation_session.start_time, :to_time => observation_session.end_time) %></td>
-        <% @species.each do |species| %>
+        <% @selected_species.each do |species| %>
           <td style="color: rgb(<%= species.diagram_colour %>)"><%= observation_session.images.where(:species_id => species.id).count %></td>
         <% end %>
         <% if params[:action] == 'index' %>
